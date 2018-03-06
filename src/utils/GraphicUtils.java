@@ -4,6 +4,8 @@ import singleton.ConfigurationManager;
 import singleton.PostgresSQLDBManager;
 import java.awt.Component;
 import java.util.Vector;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -41,17 +43,17 @@ public class GraphicUtils {
         }
     }
 
-    public static void populateFeatureList(JList jList) {
+    public static void populateFeatureList(ListView listView) {
         if (!ConfigurationManager.getConfigurationManager().getConfiguration().getStrainTypeId().isEmpty() && !ConfigurationManager.getConfigurationManager().getConfiguration().getTableName().isEmpty()) {
-            Vector<String> columnNames = PostgresSQLDBManager.getAllTableColumnLabels(ConfigurationManager.getConfigurationManager().getConfiguration().getTableName());
-            jList.setListData(columnNames);
-            jList.setSelectedIndex(0);
+            ObservableList<String> columnNames = PostgresSQLDBManager.getAllTableColumnLabels(ConfigurationManager.getConfigurationManager().getConfiguration().getTableName());
+            listView.setItems(columnNames);
+            listView.getSelectionModel().select(0);
         }
     }
 
     public static void populateFeatureComboBox(JComboBox<String> jComboBox) {
         if (!ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvStrainTypeId().isEmpty() && !ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvTableName().isEmpty()) {
-            Vector<String> columnNames = PostgresSQLDBManager.getAllTableColumnLabels(ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvTableName());
+            ObservableList<String> columnNames = PostgresSQLDBManager.getAllTableColumnLabels(ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvTableName());
             jComboBox.removeAllItems();
             for (String s : columnNames) {
                 if (!s.equals("*")) {

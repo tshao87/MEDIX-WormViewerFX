@@ -12,6 +12,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Vector;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -36,33 +38,32 @@ public class Utils {
         }
     };
     
-    public static Vector generateDataVectorFromFiveNumberSummaryList (String label, ArrayList<FiveNumberSummary> fnsList) {
+    public static ObservableList<String> generateDataRowFromFiveNumberSummaryList (String label, ArrayList<FiveNumberSummary> fnsList) {
         DecimalFormat df = new DecimalFormat("#.##");
-        Vector<Object> vector = new Vector<>();
-        vector.add(label);
+        ObservableList<String> oList = FXCollections.observableArrayList();
+        oList.add(label);
         for (FiveNumberSummary fns : fnsList) {
             switch (label) {
                 case "Min":
-                    vector.add(df.format(fns.getMin()));
+                    oList.add(df.format(fns.getMin()));
                     break;
                 case "1st Quartile":
-                    vector.add(df.format(fns.getFirstQuartile()));
+                    oList.add(df.format(fns.getFirstQuartile()));
                     break;
                 case "Median":
-                    vector.add(df.format(fns.getMedian()));
+                    oList.add(df.format(fns.getMedian()));
                     break;
                 case "3rd Quartile":
-                    vector.add(df.format(fns.getThirdQuartile()));
+                    oList.add(df.format(fns.getThirdQuartile()));
                     break;
                 case "Max":
-                    vector.add(df.format(fns.getMax()));
+                    oList.add(df.format(fns.getMax()));
                     break;
                 default:
                     break;
-            }
-            
+            }           
         }
-        return vector;
+        return oList;
     }
     
     public static String convertStarinTypeIdToDatasetName(String StrainTypeId) {
@@ -106,15 +107,15 @@ public class Utils {
         return imagePathList;
     }
     
-    public static void displayErrorMessage(JPanel jpanel, String message){
-        JOptionPane.showMessageDialog(jpanel,
+    public static void displayErrorMessage(String message){
+        JOptionPane.showMessageDialog(new JPanel(),
                         message,
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
     }
     
-    public static void displayWarningMessage(JPanel jpanel, String message){
-        JOptionPane.showMessageDialog(jpanel,
+    public static void displayWarningMessage(String message){
+        JOptionPane.showMessageDialog(new JPanel(),
                         message,
                         "Warning",
                         JOptionPane.WARNING_MESSAGE);

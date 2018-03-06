@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javax.sql.rowset.CachedRowSet;
 import object.DVDataset;
 import org.postgresql.copy.CopyManager;
@@ -45,10 +47,10 @@ public class PostgresSQLDBManager {
         return postgresSQLDBManager;
     }
 
-    public static Vector<String> getAllTableColumnLabels(String tableName) {
+    public static ObservableList<String> getAllTableColumnLabels(String tableName) {
         Statement stmt = null;
         ResultSet rs = null;
-        Vector<String> resultList = new Vector();
+        ObservableList<String> resultList = FXCollections.observableArrayList();
         final String query = new QueryFactory("SELECT * FROM ? WHERE false").set(tableName, false).toString();
 
         try {

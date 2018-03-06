@@ -17,7 +17,7 @@ public class WormViewerFX extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("WormViewFXMain.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("WormViewerFXMain.fxml"));
         
         Scene scene = new Scene(root);
         

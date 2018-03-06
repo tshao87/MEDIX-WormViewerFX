@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.TextArea;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
@@ -18,12 +19,12 @@ import singleton.ConnectionManager;
 
 public class DatabaseTableInserter {
 
-    private final javax.swing.JTextArea consoleDisplayTextArea;
+    private final TextArea consoleDisplayTextArea;
     private final String[] tableNames = ConfigurationManager.getConfigurationManager().getDPConfiguration().getTABLE_NAMES();
     private String[] fileNames = new String[tableNames.length];
     private final String extension = ".csv";
 
-    public DatabaseTableInserter(javax.swing.JTextArea consoleDisplayTextArea) {
+    public DatabaseTableInserter(TextArea consoleDisplayTextArea) {
         this.consoleDisplayTextArea = consoleDisplayTextArea;
         for (int i = 0; i < tableNames.length; i++) {
             fileNames[i] = ConfigurationManager.getConfigurationManager().getDPConfiguration().getDirectoryPath() + "\\" + tableNames[i] + extension;

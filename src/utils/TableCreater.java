@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.TextArea;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -31,7 +32,7 @@ public class TableCreater {
     private ArrayList<String> frameIdList;
     private String strainTypeId;
     private CSVParser masterFileDataRecordParser;
-    private javax.swing.JTextArea consoleDisplayTextArea;
+    private TextArea consoleDisplayTextArea;
 
     static final String[] EXTENSIONS = new String[]{
         "jpeg", "jpg"
@@ -49,7 +50,7 @@ public class TableCreater {
         }
     };
 
-    public TableCreater(javax.swing.JTextArea consoleDisplayTextArea) {
+    public TableCreater(TextArea consoleDisplayTextArea) {
         try {
             this.consoleDisplayTextArea = consoleDisplayTextArea;
             new File(ConfigurationManager.getConfigurationManager().getGTConfiguration().getOutputPath()).mkdir();

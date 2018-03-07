@@ -49,7 +49,7 @@ public class DataVisualizationPanel extends javax.swing.JPanel {
                 ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvTableName(item.toString());
                 ArrayList<String> tableKeys = PostgresSQLDBManager.getAllKeysOfTable(item.toString());
                 ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvTableKeys(tableKeys);
-                GraphicUtils.populateFeatureComboBox(featureComboBox);
+//                GraphicUtils.populateFeatureComboBox(featureComboBox);
             }
         }
     }
@@ -71,8 +71,6 @@ public class DataVisualizationPanel extends javax.swing.JPanel {
     public DataVisualizationPanel() {
         initComponents();
         initData();
-        
-        counter = 0;
     }
 
     private void initData() {
@@ -94,7 +92,7 @@ public class DataVisualizationPanel extends javax.swing.JPanel {
         tableComboBox.setSelectedIndex(0);
 //        System.out.print(ConfigurationManager.getConfigurationManager().getConfiguration().getTableName());
         ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvTableName(tableComboBox.getSelectedItem().toString());
-        GraphicUtils.populateFeatureComboBox(featureComboBox);
+//        GraphicUtils.populateFeatureComboBox(featureComboBox);
         featureComboBox.addItemListener(new FeatureComboBoxItemChangeListener());
         featureComboBox.setSelectedIndex(0);
         ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvSelectedColumn(featureComboBox.getSelectedItem().toString());
@@ -322,7 +320,6 @@ public class DataVisualizationPanel extends javax.swing.JPanel {
         timer = null;
         timelinePanel.remove(timelinePlotPanel);
         timelinePlotPanel = null;
-        counter = 0;
         dataset = null;
         imageLabel.setIcon(null);
         super.revalidate();
@@ -357,6 +354,5 @@ public class DataVisualizationPanel extends javax.swing.JPanel {
 private DynamicLinePlotPanel timelinePlotPanel;
     private Timer timer;
     private DVDataset dataset;
-    private int counter;
     private LinkedList<String> imagePathList;
 }

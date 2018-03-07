@@ -1,6 +1,6 @@
 package wormviewerfx;
 
-import graphics.FiveNumberSummary;
+import object.FiveNumberSummary;
 import java.io.File;
 import java.net.URL;
 import java.sql.ResultSetMetaData;

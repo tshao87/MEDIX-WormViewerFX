@@ -5,7 +5,7 @@
  */
 package utils;
 
-import graphics.FiveNumberSummary;
+import object.FiveNumberSummary;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.DecimalFormat;

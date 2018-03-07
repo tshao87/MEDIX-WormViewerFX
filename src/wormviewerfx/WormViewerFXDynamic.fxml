@@ -9,8 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="850.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="wormviewerfx.WormViewerFXDynamicController">
+<AnchorPane fx:id="dynamicDataPane" prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wormviewerfx.WormViewerFXDynamicController">
    <children>
       <VBox layoutX="343.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -37,7 +36,7 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <ComboBox prefWidth="150.0">
+                        <ComboBox fx:id="datasetComboBox" onAction="#handleDatasetComboBox" prefWidth="150.0">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
@@ -47,13 +46,13 @@
                               <Insets bottom="10.0" top="20.0" />
                            </padding>
                         </Label>
-                        <ComboBox prefWidth="150.0" />
+                        <ComboBox fx:id="tableComboBox" onAction="#handleTableComboBox" prefWidth="150.0" />
                         <Label text="Select Feature">
                            <padding>
                               <Insets bottom="10.0" top="20.0" />
                            </padding>
                         </Label>
-                        <ComboBox prefWidth="150.0" />
+                        <ComboBox fx:id="featureComboBox" onAction="#handleFeatureComboBox" prefWidth="150.0" />
                      </children>
                      <HBox.margin>
                         <Insets left="10.0" />
@@ -69,7 +68,10 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <AnchorPane />
+                        <AnchorPane fx:id="timelinePane" prefHeight="250.0">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></AnchorPane>
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="150.0">
@@ -77,17 +79,17 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                      <children>
-                        <Button defaultButton="true" mnemonicParsing="false" prefWidth="150.0" text="Play">
+                        <Button fx:id="playButton" defaultButton="true" mnemonicParsing="false" onAction="#onPlayButtonClicked" prefWidth="150.0" text="Play">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Button>
-                        <Button disable="true" mnemonicParsing="false" prefWidth="150.0" text="Pause">
+                        <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Pause">
                            <VBox.margin>
                               <Insets bottom="50.0" top="50.0" />
                            </VBox.margin>
                         </Button>
-                        <Button cancelButton="true" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Reset" />
+                        <Button fx:id="resetButton" cancelButton="true" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Reset" />
                      </children>
                   </VBox>
                </children>

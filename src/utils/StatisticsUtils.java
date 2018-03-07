@@ -1,6 +1,6 @@
 package utils;
 
-import graphics.FiveNumberSummary;
+import object.FiveNumberSummary;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

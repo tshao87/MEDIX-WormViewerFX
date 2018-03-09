@@ -27,7 +27,7 @@ public class DatabaseTableInserter {
     public DatabaseTableInserter(TextArea consoleDisplayTextArea) {
         this.consoleDisplayTextArea = consoleDisplayTextArea;
         for (int i = 0; i < tableNames.length; i++) {
-            fileNames[i] = ConfigurationManager.getConfigurationManager().getDPConfiguration().getDirectoryPath() + "\\" + tableNames[i] + extension;
+            fileNames[i] = ConfigurationManager.getConfigurationManager().getDPConfiguration().getDirectoryPath() + "\\dbtables\\" + tableNames[i] + extension;
             tableNames[i] = tableNames[i].toLowerCase();
         }
     }
@@ -35,7 +35,6 @@ public class DatabaseTableInserter {
     public void insertIntoDatabase() {
         FileReader fr = null;
         try {
-
             for (int i = 0; i < fileNames.length; i++) {
                 fr = new FileReader(fileNames[i]);
                 CopyManager copyManager = new CopyManager(ConnectionManager.getConnectionManager().getConnection().unwrap(BaseConnection.class));
@@ -58,6 +57,7 @@ public class DatabaseTableInserter {
                 }
                 fr = null;
             }
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "\n\nFinished!!\n");
         }
     }
 }

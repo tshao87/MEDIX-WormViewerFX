@@ -74,12 +74,12 @@ public class TableCreater {
         if (!masterFileDataRecordParser.isClosed()) {
             try {
                 final String masterFilePath = ConfigurationManager.getConfigurationManager().getGTConfiguration().getMasterFilePath();
-                consoleDisplayTextArea.setText("====== Start of reseting MF parser ======\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "====== Start of reseting MF parser ======\n");
                 Reader masterFileIn;
                 masterFileIn = new FileReader(masterFilePath);
                 masterFileDataRecordParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(masterFileIn);
-                consoleDisplayTextArea.setText("done!\n");
-                consoleDisplayTextArea.setText("====== End of reseting MF parser ======\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "done!\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "====== End of reseting MF parser ======\n");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -96,7 +96,7 @@ public class TableCreater {
         creatMovementFeaturesBinned();
         creatOtherTables();
 
-        consoleDisplayTextArea.setText("\n\n!!! All 17 tables completed for " + strainTypeId + " !!!\n");
+        consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "\n\n!!! All 17 tables completed for " + strainTypeId + " !!!\n");
     }
 
     private void createStraintype() {
@@ -135,7 +135,7 @@ public class TableCreater {
 
                 strainTypeId = wormType + "_" + resolutionType + "_" + foodCondition + "_" + sIndex;
             } else {
-                consoleDisplayTextArea.setText("CATAGORY_NAME parse fails\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "CATAGORY_NAME parse fails\n");
                 return;
             }
 
@@ -148,7 +148,7 @@ public class TableCreater {
             printer.printRecord(outputFileData);
             printer.flush();
             printer.close();
-            consoleDisplayTextArea.setText("========= StrainTypeId creat completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= StrainTypeId creat completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -178,7 +178,7 @@ public class TableCreater {
             }
 
             occupancyPrinter.close();
-            consoleDisplayTextArea.setText("========= Occupancy creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= Occupancy creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -223,10 +223,10 @@ public class TableCreater {
                 printer.printRecord(outputFileData);
                 printer.flush();
 
-                consoleDisplayTextArea.setText(imageNumberStr + "\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + imageNumberStr + "\n");
             }
             printer.close();
-            consoleDisplayTextArea.setText("========= ImageInfo creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= ImageInfo creation completed ==========\n");
 
             createVideoInfo(strainTypeId, timeElapsedStr, Integer.parseInt(imageNumberStr) + 1);
         } catch (IOException ex) {
@@ -264,7 +264,7 @@ public class TableCreater {
             printer.printRecord(outputFileData);
             printer.flush();
             printer.close();
-            consoleDisplayTextArea.setText("========= VideoInfo creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= VideoInfo creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -298,7 +298,7 @@ public class TableCreater {
             }
 
             imagePathInfoFeaturesPrinter.close();
-            consoleDisplayTextArea.setText("========= ImagePathInfo creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= ImagePathInfo creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -313,9 +313,9 @@ public class TableCreater {
             String trackerDatPath = ConfigurationManager.getConfigurationManager().getGTConfiguration().getLogPath() + "\\log.dat";
             File trackDat = new File(trackerDatPath);
             if (!trackDat.exists()) {
-                consoleDisplayTextArea.setText("No log.dat file!\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "No log.dat file!\n");
                 logDatPrinter.close();
-                consoleDisplayTextArea.setText("========= LogDat creation completed ==========\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= LogDat creation completed ==========\n");
                 return;
             }
 
@@ -343,7 +343,7 @@ public class TableCreater {
 
             is.close();
             logDatPrinter.close();
-            consoleDisplayTextArea.setText("========= LogDat creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= LogDat creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -378,7 +378,7 @@ public class TableCreater {
             }
             inputFileDataRecordParser.close();
             printer.close();
-            consoleDisplayTextArea.setText("========= MovementFeaturesBinned creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= MovementFeaturesBinned creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -434,10 +434,10 @@ public class TableCreater {
             }
             trackerInputFileIn.close();
             trackerPrinter.close();
-            consoleDisplayTextArea.setText("========= Tracker creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= Tracker creation completed ==========\n");
             featureLogInputFileIn.close();
             featureLogPrinter.close();
-            consoleDisplayTextArea.setText("========= FeatureLog creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= FeatureLog creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -448,7 +448,7 @@ public class TableCreater {
             resetMasterFileDataRecordParser();
 
             if (frameIdList.isEmpty()) {
-                consoleDisplayTextArea.setText("Empty frameid list found!\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "Empty frameid list found!\n");
                 return;
             }
 
@@ -489,7 +489,7 @@ public class TableCreater {
             while (masterFileDataRecordItr.hasNext()) {
                 CSVRecord record = masterFileDataRecordItr.next();
                 String frameId = frameIdItr.next();
-                consoleDisplayTextArea.setText(frameId + "\n");
+                consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + frameId + "\n");
 
                 createExperimentalFeatures(experimentalFeaturesPrinter, record, frameId);
                 createGenericTableFromMasterFile(headTailInfoPrinter, record, frameId, headTailInfoOutputHeaders, 1);
@@ -510,7 +510,7 @@ public class TableCreater {
             sizeandShapeFeaturesPrinter.close();
             trajectoryFeaturesPrinter.close();
 
-            consoleDisplayTextArea.setText("========= MF related tables creation completed ==========\n");
+            consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "========= MF related tables creation completed ==========\n");
         } catch (IOException ex) {
             Logger.getLogger(TableCreater.class.getName()).log(Level.SEVERE, null, ex);
         }

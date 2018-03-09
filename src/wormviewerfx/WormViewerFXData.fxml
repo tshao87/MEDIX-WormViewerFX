@@ -42,7 +42,7 @@
                      </GridPane.margin>
                   </TextField>
                   <Button fx:id="mfPathButton" mnemonicParsing="false" onAction="#onMfPathButtonClicked" prefWidth="150.0" text="Browse" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                  <CheckBox fx:id="outputHeadersCheckBox" mnemonicParsing="false" onAction="#onOutputHeadersCheckBoxClicked" text="Output with Headers" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="outputHeadersCheckBox" mnemonicParsing="false" onAction="#onOutputHeadersCheckBoxClicked" selected="true" text="Output with Headers" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <Button fx:id="mfGenerationButton" mnemonicParsing="false" onAction="#onMfGenerationButtonClicked" prefWidth="150.0" text="Generate Master File" GridPane.rowIndex="3" />
                   <Button fx:id="tableGenerationButton" mnemonicParsing="false" onAction="#onTableGenerationButtonClicked" prefWidth="150.0" text="Generate 17 Tables" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <Button fx:id="uploadIntoDBButton" mnemonicParsing="false" onAction="#onUploadIntoDBButtonClicked" prefWidth="150.0" text="Upload Into DB" GridPane.columnIndex="4" GridPane.rowIndex="3" />

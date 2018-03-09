@@ -105,7 +105,7 @@ public class WormViewerFXDataController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        outputHeadersCheckBox.setSelected(true);
     }    
     
     private boolean validateGTFilePath() {
@@ -144,12 +144,20 @@ public class WormViewerFXDataController implements Initializable {
             Utils.displayWarningMessage("Please select directory first!");
             return false;
         }
-        File folder = new File(filePathTextField.getText());
+        if (!Files.exists(Paths.get(filePathTextField.getText() + "\\dbtables"))) {
+//            consoleDisplayTextArea.append("Error: no movementFeatures.csv under data folder!\n");
+            Utils.displayErrorMessage("Error: no 'dbtables' folder under current folder!\n");
+            return false;
+        }
+        
+        String folderPath = filePathTextField.getText() + "\\dbtables";
+        
+        File folder = new File(folderPath);
         File[] listOfFiles = folder.listFiles();
         HashSet<String> hSet = new HashSet<>();
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                hSet.add(listOfFiles[i].getName());
+                hSet.add(listOfFiles[i].getName().toLowerCase());
             }
         }
 
@@ -160,9 +168,9 @@ public class WormViewerFXDataController implements Initializable {
         }
 
         for (String s : ConfigurationManager.getConfigurationManager().getDPConfiguration().getTABLE_NAMES()) {
-            if (!hSet.contains(s + ".csv")) {
+            if (!hSet.contains(s.toLowerCase() + ".csv")) {
 //                consoleDisplayTextArea.append("Error: no " + s + " file under data folder!\n");
-                Utils.displayErrorMessage("Error: no " + s + " file under data folder!\n");
+                Utils.displayErrorMessage("Error: no " + s + " file under current folder!\n");
                 return false;
             }
         }

@@ -3,7 +3,6 @@ package wormviewerfx;
 import graphics.DynamicLinePlotPanel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import object.DVDataset;
+import object.NoMoreFrameException;
 import singleton.ConfigurationManager;
 import singleton.PostgresSQLDBManager;
 import utils.GraphicUtils;
@@ -85,8 +85,7 @@ public class WormViewerFXDynamicController implements Initializable {
 
     @FXML
     private void handleFeatureComboBox() {
-        Object item = featureComboBox.getSelectionModel().getSelectedItem();
-        ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvSelectedColumn(item.toString());
+        ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvSelectedColumn(featureComboBox.getSelectionModel().getSelectedItem().toString());
     }
 
     @FXML
@@ -100,7 +99,9 @@ public class WormViewerFXDynamicController implements Initializable {
         } catch (NumberFormatException nfe) {
 
         }
-
+        
+        timelinePlotPanel = new graphics.DynamicLinePlotPanel(dataset, dataDisplayTextArea);
+        timelinePane.getChildren().add(timelinePlotPanel);
         timer = new AnimationTimer() {
             private long lastUpdate = 0;
 
@@ -112,8 +113,9 @@ public class WormViewerFXDynamicController implements Initializable {
                             System.out.println(imagePathList.peek());
                             Image img = new Image(new FileInputStream(imagePathList.pop()), 400.0, 300.0, true, true);
                             imageView.setImage(img);
-                            dynamicDataPane.requestLayout();
-                        } catch (FileNotFoundException ex) {
+                            timelinePlotPanel.start();
+                        } catch (FileNotFoundException | NoMoreFrameException ex) {
+                            timer.stop();
                             Logger.getLogger(WormViewerFXDynamicController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -121,13 +123,6 @@ public class WormViewerFXDynamicController implements Initializable {
                 }
             }
         };
-//
-//        timelinePlotPanel = new graphics.DynamicLinePlotPanel(timer, dataset, dataDisplayTextArea);
-//        timelinePlotPanel.setMaximumSize(new java.awt.Dimension(464, 188));
-//        timelinePlotPanel.setMinimumSize(new java.awt.Dimension(464, 188));
-//        timelinePlotPanel.setPreferredSize(new java.awt.Dimension(464, 188));
-//        timelinePanel.add(timelinePlotPanel, java.awt.BorderLayout.CENTER);
-//        super.revalidate();
 
         timer.start();
         pauseButton.setDisable(false);
@@ -135,7 +130,7 @@ public class WormViewerFXDynamicController implements Initializable {
         playButton.setDisable(true);
         datasetComboBox.setDisable(true);
         featureComboBox.setDisable(true);
-        tableComboBox.setDisable(false);
+        tableComboBox.setDisable(true);
     }
 
     /**

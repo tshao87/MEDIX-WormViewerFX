@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.Vector;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -107,17 +109,11 @@ public class Utils {
         return imagePathList;
     }
     
-    public static void displayErrorMessage(String message){
-        JOptionPane.showMessageDialog(new JPanel(),
-                        message,
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-    }
-    
-    public static void displayWarningMessage(String message){
-        JOptionPane.showMessageDialog(new JPanel(),
-                        message,
-                        "Warning",
-                        JOptionPane.WARNING_MESSAGE);
+    public static void displaySimpleDialog(AlertType type, String context){
+        Alert alert = new Alert(type);
+        alert.setTitle(type.toString());
+        alert.setHeaderText(null);
+        alert.setContentText(context);
+        alert.showAndWait();
     }
 }

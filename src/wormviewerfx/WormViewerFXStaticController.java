@@ -27,6 +27,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.sql.rowset.CachedRowSet;
 import javax.swing.JFileChooser;
@@ -111,32 +114,36 @@ public class WormViewerFXStaticController implements Initializable {
             summaryAnchorPane.getChildren().addAll(summaryTableView);
         }
     }
-    
-    @FXML
-    private void onDownloadDatasetButtonClicked() {                                                      
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle("Save file");
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setSelectedFile(new File("output"));
-        chooser.setFileFilter(new FileNameExtensionFilter("CSV file", "csv"));
 
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String filename = chooser.getSelectedFile().getPath();
-            if (!filename .endsWith(".csv")){
+    @FXML
+    private void onDownloadDatasetButtonClicked() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file");
+        fileChooser.getExtensionFilters().addAll(
+         new ExtensionFilter("CSV file", "*.csv"));
+        fileChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        File file = fileChooser.showSaveDialog(new Stage());
+        if (file != null) {
+            String filename = file.getPath();
+            if (!filename.endsWith(".csv")) {
                 filename += ".csv";
             }
             PostgresSQLDBManager.saveOutputData(filename);
-            System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+            System.out.println("getCurrentDirectory(): " + fileChooser.getInitialDirectory());
             System.out.println("getSelectedFile() : " + filename);
-        } else {
-            System.out.println("No Selection ");
         }
-    } 
+    }
+
+    @FXML
+    private void onDownloadMasterFileButtonClicked() {
+
+    }
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -222,10 +229,10 @@ public class WormViewerFXStaticController implements Initializable {
 
         for (int i = -1; i < fnsList.size(); i++) {
             final int j = i + 1;
-            if(i == -1) {
+            if (i == -1) {
                 col = new TableColumn("");
             } else {
-            col = new TableColumn(fnsList.get(i).getName());
+                col = new TableColumn(fnsList.get(i).getName());
             }
             col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 @Override
@@ -242,7 +249,7 @@ public class WormViewerFXStaticController implements Initializable {
         data.add(Utils.generateDataRowFromFiveNumberSummaryList("3rd Quartile", fnsList));
         data.add(Utils.generateDataRowFromFiveNumberSummaryList("Max", fnsList));
         tableView.setItems(data);
-        
+
         return tableView;
     }
 

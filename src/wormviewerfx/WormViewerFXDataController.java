@@ -9,10 +9,15 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javax.swing.JFileChooser;
 import object.FilePathConfiguration;
 import singleton.ConfigurationManager;
@@ -66,19 +71,17 @@ public class WormViewerFXDataController implements Initializable {
     }                                                     
     
     @FXML
-    private void onMfPathButtonClicked() {                                             
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle("Choose dataset directory");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-            System.out.println("getSelectedFile() : " + chooser.getSelectedFile().getPath());
-            filePathTextField.setText(chooser.getSelectedFile().getPath());
-        } else {
-            System.out.println("No Selection");
+    private void onMfPathButtonClicked() {
+        DirectoryChooser  directoryChooser  = new DirectoryChooser ();
+        directoryChooser.setTitle("Choose dataset directory");
+        directoryChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        File file = directoryChooser.showDialog(new Stage());
+        if (file != null) {
+            System.out.println("getCurrentDirectory(): " + directoryChooser.getInitialDirectory());
+            System.out.println("getSelectedFile() : " + file.getPath());
+            filePathTextField.setText(file.getPath());
         }
     }                                            
     
@@ -112,12 +115,12 @@ public class WormViewerFXDataController implements Initializable {
     
     private boolean validateGTFilePath() {
         if (filePathTextField.getText().equals("")) {
-            Utils.displayWarningMessage("Please select directory first!");
+            Utils.displaySimpleDialog(AlertType.WARNING, "Please select directory first!");
             return false;
         }
         if (!Files.exists(Paths.get(filePathTextField.getText() + "\\data"))) {
 //            consoleDisplayTextArea.append("Error: no 'data' path under root!\n");
-            Utils.displayErrorMessage("Error: no 'data' path under root!\n");
+            Utils.displaySimpleDialog(AlertType.ERROR, "Error: no 'data' path under root!\n");
             return false;
         }
         return true;
@@ -125,16 +128,16 @@ public class WormViewerFXDataController implements Initializable {
 
     private boolean validateMFFilePath() {
         if (filePathTextField.getText().equals("")) {
-            Utils.displayWarningMessage("Please select directory first!");
+            Utils.displaySimpleDialog(AlertType.WARNING, "Please select directory first!");
             return false;
         }
         if (!Files.exists(Paths.get(filePathTextField.getText() + "\\data\\movementFeatures.csv"))) {
 //            consoleDisplayTextArea.append("Error: no movementFeatures.csv under data folder!\n");
-            Utils.displayErrorMessage("Error: no movementFeatures.csv under data folder!\n");
+            Utils.displaySimpleDialog(AlertType.ERROR, "Error: no movementFeatures.csv under data folder!\n");
             return false;
         } else if (!Files.exists(Paths.get(filePathTextField.getText() + "\\matlab\\AllFeatures.csv"))) {
 //            consoleDisplayTextArea.append("Error: no AllFeatures.csv under matlab folder!\n");
-            Utils.displayErrorMessage("Error: no AllFeatures.csv under matlab folder!\n");
+            Utils.displaySimpleDialog(AlertType.ERROR, "Error: no AllFeatures.csv under matlab folder!\n");
             return false;
         }
         consoleDisplayTextArea.setText("");
@@ -143,12 +146,12 @@ public class WormViewerFXDataController implements Initializable {
 
     private boolean validateDPFilePath() {
         if (filePathTextField.getText().equals("")) {
-            Utils.displayWarningMessage("Please select directory first!");
+            Utils.displaySimpleDialog(AlertType.WARNING, "Please select directory first!");
             return false;
         }
         if (!Files.exists(Paths.get(filePathTextField.getText() + "\\dbtables"))) {
 //            consoleDisplayTextArea.append("Error: no movementFeatures.csv under data folder!\n");
-            Utils.displayErrorMessage("Error: no 'dbtables' folder under current folder!\n");
+            Utils.displaySimpleDialog(AlertType.ERROR, "Error: no 'dbtables' folder under current folder!\n");
             return false;
         }
         
@@ -165,14 +168,14 @@ public class WormViewerFXDataController implements Initializable {
 
         if (hSet.size() < 17) {
 //            consoleDisplayTextArea.append("Error: no 17 tables under current folder!\n");
-            Utils.displayErrorMessage("Error: no 17 tables under current folder!\n");
+            Utils.displaySimpleDialog(AlertType.ERROR, "Error: no 17 tables under current folder!\n");
             return false;
         }
 
         for (String s : ConfigurationManager.getConfigurationManager().getDPConfiguration().getTABLE_NAMES()) {
             if (!hSet.contains(s.toLowerCase() + ".csv")) {
 //                consoleDisplayTextArea.append("Error: no " + s + " file under data folder!\n");
-                Utils.displayErrorMessage("Error: no " + s + " file under current folder!\n");
+                Utils.displaySimpleDialog(AlertType.ERROR, "Error: no " + s + " file under current folder!\n");
                 return false;
             }
         }

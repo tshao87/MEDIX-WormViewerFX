@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -108,9 +109,9 @@ public class MasterFileCreater {
             printer.close();
             
         } catch (FileNotFoundException ex) {
-            Utils.displayErrorMessage(ex.getLocalizedMessage());
+            Utils.displaySimpleDialog(Alert.AlertType.ERROR, ex.getLocalizedMessage());
         } catch (IOException ex) {
-            Utils.displayErrorMessage(ex.getLocalizedMessage());
+            Utils.displaySimpleDialog(Alert.AlertType.ERROR, ex.getLocalizedMessage());
         } 
     }
 }

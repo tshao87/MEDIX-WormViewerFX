@@ -2,7 +2,11 @@ package wormviewerfx;
 
 import object.FiveNumberSummary;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,13 +36,12 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.sql.rowset.CachedRowSet;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import singleton.ConfigurationManager;
 import singleton.PostgresSQLDBManager;
 import utils.GraphicUtils;
 import utils.StatisticsUtils;
 import utils.Utils;
+import static utils.Utils.convertStarinTypeIdToDatasetName;
 
 /**
  * FXML Controller class
@@ -120,7 +123,7 @@ public class WormViewerFXStaticController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save file");
         fileChooser.getExtensionFilters().addAll(
-         new ExtensionFilter("CSV file", "*.csv"));
+                new ExtensionFilter("CSV file", "*.csv"));
         fileChooser.setInitialDirectory(
                 new File(System.getProperty("user.home"))
         );
@@ -132,13 +135,29 @@ public class WormViewerFXStaticController implements Initializable {
             }
             PostgresSQLDBManager.saveOutputData(filename);
             System.out.println("getCurrentDirectory(): " + fileChooser.getInitialDirectory());
-            System.out.println("getSelectedFile() : " + filename);
+            System.out.println("getSelectedFile(): " + filename);
         }
     }
 
     @FXML
     private void onDownloadMasterFileButtonClicked() {
-
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("CSV file", "*.csv"));
+        fileChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        File file = fileChooser.showSaveDialog(new Stage());
+        if (file != null) {
+            String filename = file.getPath();
+            if (!filename.endsWith(".csv")) {
+                filename += ".csv";
+            }
+            this.saveMasterFile(filename);
+            System.out.println("getCurrentDirectory(): " + fileChooser.getInitialDirectory());
+            System.out.println("getSelectedFile(): " + filename);
+        }
     }
 
     /**
@@ -287,5 +306,19 @@ public class WormViewerFXStaticController implements Initializable {
             Logger.getLogger(WormViewerFXStaticController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resultMap;
+    }
+    
+    private void saveMasterFile(String filename){
+        String dataSetName = convertStarinTypeIdToDatasetName(ConfigurationManager.getConfigurationManager().getConfiguration().getStrainTypeId());
+        String inputPath = "\\\\CDM-MEDIXSRV\\Nematodes\\data\\*****\\data\\MasterFile.csv";
+        inputPath = inputPath.replace("*****", dataSetName);
+        System.out.println(inputPath);
+        File inputFile = new File(inputPath);
+        File outputFile = new File(filename);
+        try {
+            Files.copy(inputFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            Logger.getLogger(WormViewerFXStaticController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

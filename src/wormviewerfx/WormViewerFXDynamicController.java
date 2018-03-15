@@ -12,14 +12,18 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import object.DVDataset;
 import object.NoMoreFrameException;
+import object.StatusTimer;
+import org.jfree.chart.fx.ChartCanvas;
 import singleton.ConfigurationManager;
 import singleton.PostgresSQLDBManager;
 import utils.GraphicUtils;
@@ -34,7 +38,7 @@ public class WormViewerFXDynamicController implements Initializable {
     static int FPS = 30;
     static int OFFSET = 7;
     private DynamicLinePlotPanel timelinePlotPanel;
-    private AnimationTimer timer;
+    private StatusTimer timer;
     private DVDataset dataset;
     private LinkedList<String> imagePathList;
 
@@ -64,7 +68,7 @@ public class WormViewerFXDynamicController implements Initializable {
 
     @FXML
     AnchorPane timelinePane;
-    
+
     @FXML
     AnchorPane dynamicDataPane;
 
@@ -85,7 +89,9 @@ public class WormViewerFXDynamicController implements Initializable {
 
     @FXML
     private void handleFeatureComboBox() {
-        ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvSelectedColumn(featureComboBox.getSelectionModel().getSelectedItem().toString());
+        if (featureComboBox.getSelectionModel().getSelectedItem() != null) {
+            ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvSelectedColumn(featureComboBox.getSelectionModel().getSelectedItem().toString());
+        }
     }
 
     @FXML
@@ -99,10 +105,10 @@ public class WormViewerFXDynamicController implements Initializable {
         } catch (NumberFormatException nfe) {
 
         }
-        
-        timelinePlotPanel = new graphics.DynamicLinePlotPanel(dataset, dataDisplayTextArea);
-        timelinePane.getChildren().add(timelinePlotPanel);
-        timer = new AnimationTimer() {
+
+        timelinePlotPanel = new graphics.DynamicLinePlotPanel(dataset, dataDisplayTextArea, FPS);
+
+        timer = new StatusTimer() {
             private long lastUpdate = 0;
 
             @Override
@@ -114,6 +120,17 @@ public class WormViewerFXDynamicController implements Initializable {
                             Image img = new Image(new FileInputStream(imagePathList.pop()), 400.0, 300.0, true, true);
                             imageView.setImage(img);
                             timelinePlotPanel.start();
+                            if (timelinePane.getChildren().size() > 0) {
+                                timelinePane.getChildren().remove(0);
+                            }
+                            ChartCanvas cc = timelinePlotPanel.getCanvas();
+                            cc.setVisible(true);
+                            timelinePane.setVisible(true);
+                            AnchorPane.setTopAnchor(cc, 1.0);
+                            AnchorPane.setRightAnchor(cc, 1.0);
+                            AnchorPane.setTopAnchor(cc, 1.0);
+                            AnchorPane.setRightAnchor(cc, 1.0);
+                            timelinePane.getChildren().add(cc); 
                         } catch (FileNotFoundException | NoMoreFrameException ex) {
                             timer.stop();
                             Logger.getLogger(WormViewerFXDynamicController.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,6 +148,22 @@ public class WormViewerFXDynamicController implements Initializable {
         datasetComboBox.setDisable(true);
         featureComboBox.setDisable(true);
         tableComboBox.setDisable(true);
+    }
+
+    @FXML
+    private void onPauseButtonClicked() {
+        if (timer.isRunning()) {
+            timer.stop();
+            pauseButton.setText("Continue");
+        } else {
+            timer.start();
+            pauseButton.setText("Pause");
+        }
+    }
+
+    @FXML
+    private void onResetButtonClicked() {
+        resetControls();
     }
 
     /**
@@ -164,5 +197,23 @@ public class WormViewerFXDynamicController implements Initializable {
         GraphicUtils.populateFeatureComboBox(featureComboBox);
         featureComboBox.getSelectionModel().select(0);
         ConfigurationManager.getConfigurationManager().getDVConfiguration().setDvSelectedColumn(featureComboBox.getSelectionModel().getSelectedItem().toString());
+    }
+
+    private void resetControls() {
+        timer.stop();
+        timer = null;
+        timelinePane.getChildren().clear();
+        timelinePlotPanel = null;
+        dataset = null;
+        imageView.setImage(null);
+
+        pauseButton.setText("Pause");
+        pauseButton.setDisable(true);
+        resetButton.setDisable(true);
+        playButton.setDisable(false);
+        datasetComboBox.setDisable(false);
+        featureComboBox.setDisable(false);
+        tableComboBox.setDisable(false);
+        dataDisplayTextArea.setText("");
     }
 }

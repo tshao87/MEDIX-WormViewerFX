@@ -1,9 +1,7 @@
 package graphics;
 
 import java.util.LinkedList;
-import java.util.Random;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Pane;
 import object.DVDataset;
 import object.NoMoreFrameException;
 import org.jfree.chart.ChartFactory;
@@ -15,40 +13,40 @@ import org.jfree.data.time.DynamicTimeSeriesCollection;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.xy.XYDataset;
 
-public class DynamicLinePlotPanel extends Pane {
+public class DynamicLinePlotPanel {
 
     private static final int COUNT = 2 * 1000;
-    private static final int FPS = 30;
-    private static final Random random = new Random();
+    private int FPS = 30;
     private final DVDataset dvDataset;
     private final TextArea textArea;
     private int currentFrame;
     private final DynamicTimeSeriesCollection dataset;
     private final int timerInterval = 1000 / FPS;
-    private LinkedList<Float> dvDatasetList;
-    private float[] newData = new float[1];
+    private final LinkedList<Float> dvDatasetList;
+    private final float[] newData = new float[1];
+    private ChartCanvas cv;
 
-    public DynamicLinePlotPanel(DVDataset dvDataset, TextArea textArea) {
+    public DynamicLinePlotPanel(DVDataset dvDataset, TextArea textArea, int FPS) {
         this.dvDataset = dvDataset;
         this.textArea = textArea;
         this.dvDatasetList = dvDataset.getDataList();
+        this.FPS = FPS;
         currentFrame = dvDataset.getFrameOffset();
         dataset = new DynamicTimeSeriesCollection(1, COUNT, new Millisecond());
         dataset.setTimeBase(new Millisecond(0, 0, 0, 0, 1, 1, 2011));
-        dataset.addSeries(initData(), 0, dvDataset.getTitle());
-        JFreeChart chart = createChart(dataset);
-//        ChartCanvas cv = new ChartCanvas(chart);
-//        this.getChildren().add(cv);
+        dataset.addSeries(new float[dvDataset.getFrameOffset()], 0, dvDataset.getTitle());
+        
     }
-
-    private float[] initData() {
-        float[] a = new float[dvDataset.getFrameOffset()];
-        return a;
+    
+    public ChartCanvas getCanvas(){
+        JFreeChart chart = createChart(dataset);
+        cv = new ChartCanvas(chart);
+        return this.cv;
     }
 
     private JFreeChart createChart(final XYDataset dataset) {
         String yLabel = dvDataset.getTitle();
-        
+
         if (yLabel.contains("angle")) {
             yLabel += " ";
             yLabel += "deg";
@@ -62,7 +60,7 @@ public class DynamicLinePlotPanel extends Pane {
             yLabel += " ";
             yLabel += "um/s2";
         }
-        
+
         final JFreeChart result = ChartFactory.createTimeSeriesChart(
                 "", "", yLabel, dataset, false, false, false);
         final XYPlot plot = result.getXYPlot();
@@ -74,22 +72,22 @@ public class DynamicLinePlotPanel extends Pane {
     }
 
     public void start() throws NoMoreFrameException {
-         currentFrame++;
-            newData[0] = dvDatasetList.pop();
-            dataset.appendData(newData);
-            textArea.setText("Current Frame: " + currentFrame + "\n" + dvDataset.getTitle() + ": " + newData[0] + "\nMIn = " + dvDataset.getMin() + "\nMax = " + dvDataset.getMax());
+        currentFrame++;
+        newData[0] = dvDatasetList.pop();
+        dataset.appendData(newData);
+        textArea.setText("Current Frame: " + currentFrame + "\n" + dvDataset.getTitle() + ": " + newData[0] + "\nMIn = " + dvDataset.getMin() + "\nMax = " + dvDataset.getMax());
 
-            if (dvDatasetList.peek() == null) {
-                textArea.setText(textArea.getText() + "\nVideo playback finished!");
-                throw new NoMoreFrameException();
-            } else {
-                float nextData = dvDatasetList.peek();
-                float dataStep = (nextData - newData[0]) / timerInterval;
-                for (int i = 0; i < timerInterval; i++) {
-                    dataset.advanceTime();
-                    newData[0] += i * dataStep;
-                    dataset.appendData(newData);
-                }
+        if (dvDatasetList.peek() == null) {
+            textArea.setText(textArea.getText() + "\nVideo playback finished!");
+            throw new NoMoreFrameException();
+        } else {
+            float nextData = dvDatasetList.peek();
+            float dataStep = (nextData - newData[0]) / timerInterval;
+            for (int i = 0; i < timerInterval; i++) {
+                dataset.advanceTime();
+                newData[0] += i * dataStep;
+                dataset.appendData(newData);
             }
+        }
     }
 }

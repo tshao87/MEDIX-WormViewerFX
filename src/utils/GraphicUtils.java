@@ -23,7 +23,6 @@ public class GraphicUtils {
     public static void populateFeatureComboBox(ComboBox comboBox) {
         if (!ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvStrainTypeId().isEmpty() && !ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvTableName().isEmpty()) {
             ObservableList<String> columnNames = PostgresSQLDBManager.getAllTableColumnLabels(ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvTableName());
-            comboBox.getItems().clear();
             columnNames.remove("*");
             comboBox.setItems(columnNames);
             comboBox.getSelectionModel().select(0);

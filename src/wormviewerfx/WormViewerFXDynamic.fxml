@@ -58,7 +58,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </VBox>
-                  <VBox prefHeight="200.0" prefWidth="530.0">
+                  <VBox fx:id="timelineVBox" prefHeight="200.0" prefWidth="530.0">
                      <padding>
                         <Insets left="10.0" right="10.0" />
                      </padding>
@@ -68,10 +68,11 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <AnchorPane fx:id="timelinePane" prefHeight="250.0">
+                        <Pane fx:id="pane" prefHeight="262.0" prefWidth="510.0">
                            <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin></AnchorPane>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </Pane>
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="150.0">

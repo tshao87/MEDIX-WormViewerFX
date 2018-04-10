@@ -23,6 +23,7 @@ public class WormViewerFX extends Application {
         
         stage.setResizable(false);
         stage.setScene(scene);
+        stage.setTitle("WormViewerFX");
         stage.show();
     }
 

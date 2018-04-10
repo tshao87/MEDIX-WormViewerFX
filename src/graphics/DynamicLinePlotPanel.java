@@ -8,6 +8,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.fx.ChartCanvas;
+import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.DynamicTimeSeriesCollection;
 import org.jfree.data.time.Millisecond;
@@ -24,7 +25,6 @@ public class DynamicLinePlotPanel {
     private final int timerInterval = 1000 / FPS;
     private final LinkedList<Float> dvDatasetList;
     private final float[] newData = new float[1];
-    private ChartCanvas cv;
 
     public DynamicLinePlotPanel(DVDataset dvDataset, TextArea textArea, int FPS) {
         this.dvDataset = dvDataset;
@@ -35,13 +35,11 @@ public class DynamicLinePlotPanel {
         dataset = new DynamicTimeSeriesCollection(1, COUNT, new Millisecond());
         dataset.setTimeBase(new Millisecond(0, 0, 0, 0, 1, 1, 2011));
         dataset.addSeries(new float[dvDataset.getFrameOffset()], 0, dvDataset.getTitle());
-        
     }
     
-    public ChartCanvas getCanvas(){
+    public JFreeChart getChart(){
         JFreeChart chart = createChart(dataset);
-        cv = new ChartCanvas(chart);
-        return this.cv;
+        return chart;
     }
 
     private JFreeChart createChart(final XYDataset dataset) {

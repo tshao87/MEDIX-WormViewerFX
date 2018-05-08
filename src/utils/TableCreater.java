@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -97,6 +98,7 @@ public class TableCreater {
         creatOtherTables();
 
         consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "\n\n!!! All 17 tables completed for " + strainTypeId + " !!!\n");
+        Utils.displaySimpleDialog(Alert.AlertType.INFORMATION, "All 17 tables completed for " + strainTypeId);
     }
 
     private void createStraintype() {

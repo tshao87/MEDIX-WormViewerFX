@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -58,6 +59,7 @@ public class DatabaseTableInserter {
                 fr = null;
             }
             consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "\n\nFinished!!\n");
+            Utils.displaySimpleDialog(Alert.AlertType.INFORMATION, "Finished uploading into database!\n");
         }
     }
 }

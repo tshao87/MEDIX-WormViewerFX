@@ -104,6 +104,7 @@ public class MasterFileCreater {
             
             consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "done!\n");
             consoleDisplayTextArea.setText(consoleDisplayTextArea.getText() + "====== End of creating master file ======\n");
+            Utils.displaySimpleDialog(Alert.AlertType.INFORMATION, "Finished creating MasterFile!\n");
             pssDataIn.close();
             trajectoryDataIn.close();
             printer.close();

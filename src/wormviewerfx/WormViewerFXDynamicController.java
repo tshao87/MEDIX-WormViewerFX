@@ -3,6 +3,7 @@ package wormviewerfx;
 import graphics.DynamicLinePlotPanel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -99,7 +100,7 @@ public class WormViewerFXDynamicController implements Initializable {
     @FXML
     private void onPlayButtonClicked() {
         dataset = PostgresSQLDBManager.getDVEntriesFromTable();
-        imagePathList = utils.Utils.loadImagePathByStrainTypeId(ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvStrainTypeId(), OFFSET);
+        imagePathList = utils.Utils.loadImagePathByStrainTypeId(ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvStrainTypeId(), dataset.getFrameOffset(), dataset.getSize());
         String fpsStr = PostgresSQLDBManager.getFPSBySTID(ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvStrainTypeId());
 
         try {
@@ -123,10 +124,10 @@ public class WormViewerFXDynamicController implements Initializable {
                     if (imagePathList != null && !imagePathList.isEmpty()) {
                         try {
                             System.out.println(imagePathList.peek());
-                            Image img = new Image(new FileInputStream(imagePathList.pop()), 400.0, 300.0, true, true);
+                            Image img = new Image(imagePathList.pop(), 400.0, 300.0, true, true);
                             imageView.setImage(img);
                             timelinePlotPanel.start();                         
-                        } catch (FileNotFoundException | NoMoreFrameException ex) {
+                        } catch (NoMoreFrameException ex) {
                             timer.stop();
                             Logger.getLogger(WormViewerFXDynamicController.class.getName()).log(Level.SEVERE, null, ex);
                         }

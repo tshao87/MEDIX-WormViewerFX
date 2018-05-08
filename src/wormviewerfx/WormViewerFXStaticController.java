@@ -3,6 +3,8 @@ package wormviewerfx;
 import object.FiveNumberSummary;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
@@ -309,15 +311,19 @@ public class WormViewerFXStaticController implements Initializable {
     }
     
     private void saveMasterFile(String filename){
-        String dataSetName = convertStarinTypeIdToDatasetName(ConfigurationManager.getConfigurationManager().getConfiguration().getStrainTypeId());
-        String inputPath = "\\\\CDM-MEDIXSRV\\Nematodes\\data\\*****\\data\\MasterFile.csv";
-        inputPath = inputPath.replace("*****", dataSetName);
-        System.out.println(inputPath);
-        File inputFile = new File(inputPath);
-        File outputFile = new File(filename);
-        try {
-            Files.copy(inputFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
+        try{
+            String dataSetName = convertStarinTypeIdToDatasetName(ConfigurationManager.getConfigurationManager().getConfiguration().getStrainTypeId());
+            String inputPath = "http://140.192.247.106:8585/data/*****/masterFile.csv";
+            inputPath = inputPath.replace("*****", dataSetName);
+            System.out.println(inputPath);
+            URL inputURL = new URL(inputPath);
+            File outputFile = new File(filename);
+            try(InputStream in = inputURL.openStream()) {
+                Files.copy(in, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                Logger.getLogger(WormViewerFXStaticController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (MalformedURLException ex) {
             Logger.getLogger(WormViewerFXStaticController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

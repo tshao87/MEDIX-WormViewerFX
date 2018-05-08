@@ -5,7 +5,6 @@
  */
 package object;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -13,12 +12,12 @@ import java.util.LinkedList;
  * @author mingfeishao
  */
 public class DVDataset {
-   private float min;
-   private float max;
-   private LinkedList<Float> dataList;
-   private String title;
-   private int frameOffset;
-   private int size;
+   private final float min;
+   private final float max;
+   private final LinkedList<Float> dataList;
+   private final String title;
+   private final int frameOffset;
+   private final int size;
 
     public DVDataset(float min, float max, LinkedList<Float> dataList, String title) {
         this.min = min;

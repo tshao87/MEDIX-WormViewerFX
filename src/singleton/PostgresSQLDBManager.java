@@ -239,7 +239,9 @@ public class PostgresSQLDBManager {
             title = ConfigurationManager.getConfigurationManager().getDVConfiguration().getDvSelectedColumn();
             stmt = ConnectionManager.getConnectionManager().getConnection().createStatement();
             rs = stmt.executeQuery(query);
+            int frameCount = 0;
             while (rs.next()) {
+                frameCount++;
                 String strValue = rs.getString(1);
                 if (strValue != null) {
                     try {

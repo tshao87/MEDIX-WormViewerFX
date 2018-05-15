@@ -90,30 +90,10 @@ public class Utils {
         return sb.toString();
     }
     
-//    public static LinkedList<String> loadImagePathByStrainTypeId (String StrainTypeId, int offset){
-//        LinkedList<String> imagePathList = new LinkedList<>();
-//        String dataSetName = convertStarinTypeIdToDatasetName(StrainTypeId);
-//        String inputPath = "\\\\CDM-MEDIXSRV\\Nematodes\\data\\*****\\input\\";
-//        inputPath = inputPath.replace("*****", dataSetName);
-//        System.out.println(inputPath);
-//        File inputDir = new File(inputPath);
-//        int counter = 0;
-//        
-//        for (final File f : inputDir.listFiles(IMAGE_FILTER)) {
-//            if (counter < offset) {
-//                counter++;
-//                continue;
-//            }
-//            
-//            imagePathList.add(f.getAbsolutePath());
-//        }
-//        
-//        return imagePathList;
-//    }
-    
     public static LinkedList<String> loadImagePathByStrainTypeId (String StrainTypeId, int offset, int end){
         LinkedList<String> imagePathList = new LinkedList<>();
-        String dataSetName = convertStarinTypeIdToDatasetName(StrainTypeId);
+//        String dataSetName = convertStarinTypeIdToDatasetName(StrainTypeId);
+        String dataSetName = StrainTypeId.toUpperCase();
         String inputHost = "http://140.192.247.106:8585/images/*****/";
         inputHost = inputHost.replace("*****", dataSetName);
         System.out.println(inputHost);

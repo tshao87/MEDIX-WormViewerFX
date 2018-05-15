@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * @author mshao1
  */
 public class ConnectionManager {
-    private static final String DB_NAME = "c_elegans_v5";
+    private static final String DB_NAME = "c_elegans_v6";
     private static final String DB_URL = "jdbc:postgresql://cdmmedixsrv.cdm.depaul.edu:5432/" + DB_NAME;
     private static final String DB_USERNAME = "postgres";
     private static final String DB_PASSWORD = "dbadmin";

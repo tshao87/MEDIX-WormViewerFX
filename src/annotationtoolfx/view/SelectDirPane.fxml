@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="290.0" prefWidth="590.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="annotationtoolfx.view.SelectDirPane">
+	<children>
+      <TextField fx:id="wormLocalVideoPathText" layoutX="31.0" layoutY="38.0" prefHeight="27.0" prefWidth="463.0" />
+      <Button fx:id="chooseDirButton" layoutX="507.0" layoutY="39.0" mnemonicParsing="false" text="..." />
+      <Button fx:id="removeWormDirButton" layoutX="543.0" layoutY="38.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="18.0">
+         <graphic>
+            <ImageView fitHeight="18.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../remove.png" />
+               </image>
+            </ImageView>
+         </graphic></Button>
+      <Button fx:id="downloadButton" layoutX="414.0" layoutY="82.0" mnemonicParsing="false" text="Download Video Files" />
+      <Label layoutX="14.0" layoutY="14.0" text="Worm Images Directory:" />
+      <ProgressBar fx:id="downloadProgress" layoutX="64.0" layoutY="137.0" prefHeight="20.0" prefWidth="475.0" progress="0.0" />
+      <Button fx:id="cancelDownloadButton" layoutX="250.0" layoutY="167.0" mnemonicParsing="false" text="Cancel Download" />
+      <Label fx:id="validDirLabel" layoutX="31.0" layoutY="206.0" text="Pleae enter a valid image directory" textFill="#cd0404" />
+	</children>
+</AnchorPane>

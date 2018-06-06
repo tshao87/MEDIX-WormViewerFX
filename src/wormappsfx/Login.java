@@ -1,4 +1,4 @@
-package annotationtoolfx.view;
+package wormappsfx;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,7 +26,6 @@ public class Login extends AnchorPane implements Initializable {
     @FXML
     private Label invalidLabel;
 
-    private Stage stage;
     private boolean result = false;
 
     @Override // This method is called by the FXMLLoader when initialization is complete
@@ -38,7 +37,7 @@ public class Login extends AnchorPane implements Initializable {
 			//Close Window
 			result = false;
 			Platform.exit();
-			stage.hide();
+                        ((Stage) cancelButton.getScene().getWindow()).close();
 		});
 		
     	
@@ -48,9 +47,9 @@ public class Login extends AnchorPane implements Initializable {
 			result = ConnectionSingleton.getConnectionInstance().Login(emailText.getText(), passwordText.getText());
 			
 			if(!result)
-				invalidLabel.setVisible(true);
+                            invalidLabel.setVisible(true);
 			else
-				stage.hide();
+                            ((Stage) okButton.getScene().getWindow()).close();
 		});
 		
 		
@@ -62,9 +61,6 @@ public class Login extends AnchorPane implements Initializable {
 		return result;
 	}
     
-	public void setStage(Stage stage) {
-		this.stage = stage;
-	}
 	
  
 }

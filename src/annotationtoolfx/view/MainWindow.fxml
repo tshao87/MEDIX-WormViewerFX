@@ -65,7 +65,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../back10.png" />
+						                  <Image url="@../../res/back10.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -74,7 +74,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../back.png" />
+						                  <Image url="@../../res/back.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -92,7 +92,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../play.png" />
+						                  <Image url="@../../res/play.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -101,7 +101,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../forward.png" />
+						                  <Image url="@../../res/forward.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -110,7 +110,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../forward10.png" />
+						                  <Image url="@../../res/forward10.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -124,7 +124,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../plus.png" />
+						                  <Image url="@../../res/plus.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -133,7 +133,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../minus.png" />
+						                  <Image url="@../../res/minus.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>

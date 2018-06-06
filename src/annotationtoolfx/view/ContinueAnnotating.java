@@ -41,8 +41,8 @@ public class ContinueAnnotating  extends AnchorPane implements Initializable, Wi
 
 	@Override
 	public boolean readyForward() {
-		Toggle new_toggle = group.getSelectedToggle() ;
-        if (group.getSelectedToggle() != null) {
+            Toggle new_toggle = group.getSelectedToggle() ;
+            if (group.getSelectedToggle() != null) {
         	RadioOptions ro = (RadioOptions)new_toggle.getUserData();
         	if(ro != null) {
         		if(ro == RadioOptions.load) {
@@ -62,11 +62,11 @@ public class ContinueAnnotating  extends AnchorPane implements Initializable, Wi
 
 	@Override
 	public boolean readyFinish() {
-		if(readyForward())
-			return true;
+            if(readyForward())
+		return true;
 		
-		Toggle new_toggle = group.getSelectedToggle() ;
-        if (group.getSelectedToggle() != null) {
+            Toggle new_toggle = group.getSelectedToggle() ;
+            if (group.getSelectedToggle() != null) {
         	RadioOptions ro = (RadioOptions)new_toggle.getUserData();
         	if(ro != null) {
         		if(ro == RadioOptions.offline) {
@@ -93,28 +93,28 @@ public class ContinueAnnotating  extends AnchorPane implements Initializable, Wi
 	@Override
 	public boolean next() {
 		
-		Toggle new_toggle = group.getSelectedToggle() ;
-        if (group.getSelectedToggle() != null) {
+            Toggle new_toggle = group.getSelectedToggle() ;
+            if (group.getSelectedToggle() != null) {
         	RadioOptions ro = (RadioOptions)new_toggle.getUserData();
         	if(ro != null) {
-        		if(ro == RadioOptions.load) {
-        			controlMgr.setOfflineFile(null);
-        			controlMgr.setEditAnnSet(unfinishedAnnotations.getSelectionModel().getSelectedItem());
-        		}
-        		else if(ro == RadioOptions.dontLoad) {
-        			controlMgr.setOfflineFile(null);
-        			controlMgr.setEditAnnSet(null);
-        		}
-        		else if(ro == RadioOptions.offline) {
-        			File f = new File(offlineFile.getText());
-        			controlMgr.setOfflineFile(f);
-        		}
+                    if(ro == RadioOptions.load) {
+                            controlMgr.setOfflineFile(null);
+                            controlMgr.setEditAnnSet(unfinishedAnnotations.getSelectionModel().getSelectedItem());
+                    }
+                    else if(ro == RadioOptions.dontLoad) {
+                            controlMgr.setOfflineFile(null);
+                            controlMgr.setEditAnnSet(null);
+                    }
+                    else if(ro == RadioOptions.offline) {
+                            File f = new File(offlineFile.getText());
+                            controlMgr.setOfflineFile(f);
+                    }
 
         	}		            	
-        }
+            }
 		
 		
-		return true;
+            return true;
 	}
 
 	@Override
@@ -182,24 +182,24 @@ public class ContinueAnnotating  extends AnchorPane implements Initializable, Wi
 		            if (group.getSelectedToggle() != null) {
 		            	RadioOptions ro = (RadioOptions)new_toggle.getUserData();
 		            	if(ro != null) {
-		            		if(ro == RadioOptions.load) {
-		            			chooseOfflineFile.setDisable(true);
-		            			offlineFile.setDisable(true);
-		            			chooseOfflineFile.setDisable(true);
-		            			unfinishedAnnotations.setDisable(false);
-		            		}
-		            		else if(ro == RadioOptions.dontLoad) {
-		            			chooseOfflineFile.setDisable(true);
-		            			offlineFile.setDisable(true);
-		            			chooseOfflineFile.setDisable(true);
-		            			unfinishedAnnotations.setDisable(true);
-		            		}
-		            		else if(ro == RadioOptions.offline) {
-		            			chooseOfflineFile.setDisable(false);
-		            			offlineFile.setDisable(false);
-		            			chooseOfflineFile.setDisable(false);
-		            			unfinishedAnnotations.setDisable(true);
-		            		}
+                                    if(ro == RadioOptions.load) {
+                                            chooseOfflineFile.setDisable(true);
+                                            offlineFile.setDisable(true);
+                                            chooseOfflineFile.setDisable(true);
+                                            unfinishedAnnotations.setDisable(false);
+                                    }
+                                    else if(ro == RadioOptions.dontLoad) {
+                                            chooseOfflineFile.setDisable(true);
+                                            offlineFile.setDisable(true);
+                                            chooseOfflineFile.setDisable(true);
+                                            unfinishedAnnotations.setDisable(true);
+                                    }
+                                    else if(ro == RadioOptions.offline) {
+                                            chooseOfflineFile.setDisable(false);
+                                            offlineFile.setDisable(false);
+                                            chooseOfflineFile.setDisable(false);
+                                            unfinishedAnnotations.setDisable(true);
+                                    }
 		            	}		            	
 		            }
 		    		wizard.setButtonEnabled();

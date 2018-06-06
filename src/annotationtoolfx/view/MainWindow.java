@@ -440,7 +440,7 @@ public class MainWindow extends AnchorPane implements Initializable {
 		delayText.setText("40");
 		setAnnDisabled(true);
     	try {
-    		String resOpen = "/application/view/OpenVideoWizard.fxml";
+    		String resOpen = "/annotationtoolfx/view/OpenVideoWizard.fxml";
     		FXMLLoader loader = new FXMLLoader(getClass().getResource(resOpen));
     		Parent root;
 	
@@ -506,7 +506,7 @@ public class MainWindow extends AnchorPane implements Initializable {
 	}
     
     private void save() {
-		String res = "/application/view/SaveAnnotations.fxml";
+		String res = "/annotationtoolfx/view/SaveAnnotations.fxml";
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(res));
 		Parent root;
 		try {

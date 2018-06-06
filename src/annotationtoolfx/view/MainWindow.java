@@ -419,8 +419,8 @@ public class MainWindow extends AnchorPane implements Initializable {
    			  goToFrame();
 		});
     
-    	minusButton.addEventHandler(ActionEvent.ACTION, new SpeedChangeHandler(this, -1));
-    	plusButton.addEventHandler(ActionEvent.ACTION, new SpeedChangeHandler(this, 1));
+    	minusButton.addEventHandler(ActionEvent.ACTION, new SpeedChangeHandler(this, 1));
+    	plusButton.addEventHandler(ActionEvent.ACTION, new SpeedChangeHandler(this, -1));
 
     	back10Button.addEventHandler(ActionEvent.ACTION, new NavigationHandler(this, -10));
     	backButton.addEventHandler(ActionEvent.ACTION, new NavigationHandler(this, -1));

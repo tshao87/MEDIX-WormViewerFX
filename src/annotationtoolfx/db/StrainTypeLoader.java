@@ -199,30 +199,32 @@ public class StrainTypeLoader {
    
 
 	public ArrayList<String> getFileNames(String wormVideo) {
-		ArrayList<String> list = new ArrayList<String>();
+            ArrayList<String> list = new ArrayList<String>();
 
-		String query = "SELECT imagenumber FROM imageinfo WHERE straintypeid = ? ORDER BY imagenumber";
+            String query = "SELECT imagenumber FROM imageinfo WHERE straintypeid = ? ORDER BY imagenumber";
 
+            String prefix = Utilities.getPrefixZeros(wormVideo);
+            
 	    PreparedStatement stmt;
-		try {
-			stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(query);
-			stmt.setString(1,  wormVideo);
-			ResultSet rs = stmt.executeQuery();
-		    while(rs.next()){
-		         //Retrieve by column name
-		    	String s = String.format("%d", rs.getInt(1)).toString();
-		    	s = ("000000" + s).substring(s.length());
-		    	
-		    	list.add(s + ".jpeg");
-		      }
-		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            try {
+                stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(query);
+                stmt.setString(1,  wormVideo);
+                ResultSet rs = stmt.executeQuery();
+                while(rs.next()){
+                 //Retrieve by column name
+                    String s = String.format("%d", rs.getInt(1)).toString();
+                    s = (prefix + s).substring(s.length());
 
-		
-		return list;
+                    list.add(s + ".jpeg");
+                }
+
+            } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+            }
+
+
+            return list;
 	}
 
 

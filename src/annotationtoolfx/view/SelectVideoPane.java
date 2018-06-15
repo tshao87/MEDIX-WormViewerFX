@@ -32,7 +32,7 @@ public class SelectVideoPane implements Initializable, WizardNavigationItem {
     
     
     @Override
-	public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources) {
 		
 
     }
@@ -45,17 +45,17 @@ public class SelectVideoPane implements Initializable, WizardNavigationItem {
 
 	@Override
 	public boolean readyForward() {
-		return getSelectedRow() != null;
+            return getSelectedRow() != null;
 	}
 
 	@Override
 	public boolean readyFinish() {
-		return false;
+            return false;
 	}
 
 	@Override
 	public boolean canGoBack() {
-		return false;
+            return false;
 	}
     
 	public void setWizardControl(OpenVideoWizard ovw) {
@@ -65,13 +65,13 @@ public class SelectVideoPane implements Initializable, WizardNavigationItem {
 
 	@Override
 	public boolean next() {
-		WormVideoDisplay wvd =  getSelectedRow();
-		if(wvd != null) {
-			controlMgr.setStrainTypeId(wvd.getStrainTypeId());
-			
-			return true;
-		}
-		return false;
+            WormVideoDisplay wvd =  getSelectedRow();
+            if(wvd != null) {
+                    controlMgr.setStrainTypeId(wvd.getStrainTypeId());
+
+                    return true;
+            }
+            return false;
 	}
 
 	@Override
@@ -85,18 +85,18 @@ public class SelectVideoPane implements Initializable, WizardNavigationItem {
 	
 	@Override
 	public void setControlMgr(LoadingControlManager controlMgr) {
-		this.controlMgr = controlMgr;
+            this.controlMgr = controlMgr;
 	}
 
 	@Override
 	public void loadFromDB() {
-    	controlMgr.getStrainLoader().loadWormTypes();
-    	HashMap<String, TreeItem<WormVideoDisplay>> map = controlMgr.getStrainLoader().getWormTypes();
-    	
-    	TreeItem<WormVideoDisplay> root = new TreeItem<WormVideoDisplay>(new WormVideoDisplay("", "", "", "", ""));
-    	for(String wormType : controlMgr.getStrainLoader().getWormTypeNames()) {
-    		map.get(wormType).setExpanded(true);
-        	root.getChildren().add(map.get(wormType));
+            controlMgr.getStrainLoader().loadWormTypes();
+            HashMap<String, TreeItem<WormVideoDisplay>> map = controlMgr.getStrainLoader().getWormTypes();
+
+            TreeItem<WormVideoDisplay> root = new TreeItem<WormVideoDisplay>(new WormVideoDisplay("", "", "", "", ""));
+            for(String wormType : controlMgr.getStrainLoader().getWormTypeNames()) {
+                    map.get(wormType).setExpanded(true);
+                    root.getChildren().add(map.get(wormType));
     	}
     	wormTableView.setRoot(root);
     	root.setExpanded(true);
@@ -142,6 +142,6 @@ public class SelectVideoPane implements Initializable, WizardNavigationItem {
 
 	@Override
 	public boolean skip() {
-		return false;
+            return false;
 	}
 }

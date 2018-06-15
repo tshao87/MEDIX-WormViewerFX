@@ -14,7 +14,7 @@ import annotationtoolfx.object.FrameAnnotationManager;
 public class AnnotationSaver {
 	
 	
-	public void saveAnnotations(FrameAnnotationManager mgr, AnnotationSet set, boolean finalversion) throws SQLException{
+	public void saveAnnotations(FrameAnnotationManager mgr, AnnotationSet set, boolean finalversion, double minutes) throws SQLException{
 		//Existing Set
 		PreparedStatement stmt;
 
@@ -64,16 +64,17 @@ public class AnnotationSaver {
 	    }
 	    
 	    if(finalversion) {
-		    SQL = "UPDATE annotationset SET finalversion = 'yes' WHERE setid = ?";
+		    SQL = "UPDATE annotationset SET finalversion = 'yes', timerequired = ? WHERE setid = ?";
 	        stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(SQL);
-			stmt.setString(1, set.getSetId());
+			stmt.setDouble(1, minutes);
+			stmt.setString(2, set.getSetId());
 			stmt.execute();
 	    }
 	    
 	    doSaveAnnotations(unhandledFrames, set.getSetId());
 	}
 	
-	public void saveAnnotations(FrameAnnotationManager mgr, String userId, String name, boolean finalversion) throws SQLException{
+	public void saveAnnotations(FrameAnnotationManager mgr, String userId, String name, boolean finalversion, double minutes) throws SQLException{
 		//New Set
 		ArrayList<FrameAnnotationInfo> unhandledFrames = new ArrayList<FrameAnnotationInfo>();
 		unhandledFrames.addAll(mgr.getFrameList());		
@@ -84,7 +85,7 @@ public class AnnotationSaver {
 			fv = "yes";
 		
 		PreparedStatement stmt;
-		String insertSet = "INSERT INTO AnnotationSet(userid, setid, name, datetimeannotation, straintypeid, finalversion) VALUES(?, ?, ?, ?, ?, ?);";
+		String insertSet = "INSERT INTO AnnotationSet(userid, setid, name, datetimeannotation, straintypeid, finalversion, timerequired) VALUES(?, ?, ?, ?, ?, ?, ?);";
 		stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(insertSet);
 		stmt.setString(1,  userId);
 		stmt.setString(2,  setId);
@@ -94,6 +95,7 @@ public class AnnotationSaver {
 		stmt.setDate(4, date);
 		stmt.setString(5,  mgr.getStrainTypeId());
 		stmt.setString(6,  fv);
+		stmt.setDouble(7,  minutes);
 		stmt.executeUpdate();
 		
 	    doSaveAnnotations(unhandledFrames, setId);
@@ -142,16 +144,21 @@ public class AnnotationSaver {
 		PreparedStatement stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(sql); 
 		stmt.setString(1, strainTypeId);
 		ResultSet rs = stmt.executeQuery();
-		rs.next();
-		String s = rs.getString(1);
-		rs.close();
-		stmt.close();
-		s = s.replace(strainTypeId, "");
-		s = s.replace("_a", "");
-		int i = Integer.parseInt(s);
-		i++;
-		s = strainTypeId + "_a" + Integer.toString(i);
-		return s;
+		if(rs.next()){
+               
+                    String s = rs.getString(1);
+                    rs.close();
+                    stmt.close();
+                    s = s.replace(strainTypeId, "");
+                    s = s.replace("_a", "");
+                    int i = Integer.parseInt(s);
+                    i++;
+                    s = strainTypeId + "_a" + Integer.toString(i);
+                    return s;
+                }
+                else{
+                    return strainTypeId + "_a1";
+                }
 	}
 
 	public HashMap<String, AnnotationSet> getNameSets(String strainTypeId) throws SQLException {

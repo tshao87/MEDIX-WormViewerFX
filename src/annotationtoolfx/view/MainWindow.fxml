@@ -83,7 +83,7 @@
                               	<graphic>
 						        	<ImageView fitHeight="19.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
 						               <image>
-						                  <Image url="@../../pause.png" />
+						                  <Image url="@../../res/pause.png" />
 						               </image>
 						            </ImageView>
 						         </graphic>
@@ -217,6 +217,11 @@
                                     <Label fx:id="pipFrameNoValue" layoutX="87.0" layoutY="285.0" />
                                  </children>
                               </AnchorPane>
+                              <Label fx:id="frameDoesntExistLabel" layoutX="354.0" layoutY="198.0" text="Frame Doesn't Exist" visible="false">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </AnchorPane>
                     </items>

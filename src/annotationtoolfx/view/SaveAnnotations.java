@@ -16,6 +16,8 @@ import annotationtoolfx.db.ConnectionSingleton;
 import annotationtoolfx.object.AnnotationSet;
 import annotationtoolfx.object.FrameAnnotationInfo;
 import annotationtoolfx.object.FrameAnnotationManager;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -55,6 +57,12 @@ public class SaveAnnotations  extends AnchorPane implements Initializable {
 	private Label nameExistsLabel;
 	@FXML 
 	private Label nameBlankLabel;
+        @FXML 
+        private Label enterTimeLabel;
+	@FXML
+	private TextField hoursText;
+	@FXML
+	private TextField minutesText;
 	
 	private FrameAnnotationManager frameMgr;
 	private AnnotationSaver saver;
@@ -64,119 +72,130 @@ public class SaveAnnotations  extends AnchorPane implements Initializable {
 	private boolean result = false;
 	private Stage stage;
 	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		emailText.setText(ConnectionSingleton.getConnectionInstance().getLastLoginId());
-		
-		cancelButton.setOnAction((event)-> {
-			result = false;
-			stage.hide();
-		});
-		
-		okButton.setOnAction((event)-> {
-			nameExistsLabel.setVisible(false);
-			nameBlankLabel.setVisible(false);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
-			if(!ConnectionSingleton.getConnectionInstance().Login(emailText.getText(), passwordText.getText())) {
-				invalidLabel.setVisible(true);
-			}
-			else {
-				
-				try {
-					
-					if(namesSets.containsKey(nameCombo.getSelectionModel().getSelectedItem())) {
-						AnnotationSet set = namesSets.get(nameCombo.getSelectionModel().getSelectedItem());
-						if(set != null && set.getName().length() > 0) {
-							saver.saveAnnotations(frameMgr, set, finalVersionCheck.isSelected());
-							result = true;
-						}
-						else {
-							result = save();
-						}
-					}
-					else {
-						result = save();
-					}
-				} catch (SQLException e) {
-					
-					//TODO:
-/*					Alert alert = new Alert(AlertType.CONFIRMATION);
-					alert.setTitle("Error saving annotations to the database");
-					alert.setHeaderText("Look, a Confirmation Dialog with Custom Actions");
-					alert.setContentText("Choose your option.");
+        emailText.setText(ConnectionSingleton.getConnectionInstance().getLastLoginId());
 
-					ButtonType buttonTypeSaveOffline = new ButtonType("Save Offline");
-					ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+        cancelButton.setOnAction((event)-> {
+                result = false;
+                stage.hide();
+        });
 
-					alert.getButtonTypes().setAll(buttonTypeSaveOffline, buttonTypeCancel);
+        okButton.setOnAction((event)-> {
+            nameExistsLabel.setVisible(false);
+            nameBlankLabel.setVisible(false);
+            enterTimeLabel.setVisible(false);
+            
+            String minutes = minutesText.getText();
+            String hours = minutesText.getText();
+            if(minutes == null || minutes.length() == 0){
+                minutes = "0";
+            }
+            if(hours == null || hours.length() == 0){
+                hours = "0";
+            }
+            
+            double totalMinutes = 0;
+            try{
+               totalMinutes =  Double.parseDouble(hours)*60; 
+               totalMinutes += Double.parseDouble(minutes);
+            }
+            catch(NumberFormatException e){
+                enterTimeLabel.setVisible(true);
+                return;
+            }
+            
+            if((finalVersionCheck.isSelected() && ((int)totalMinutes) == 0)||totalMinutes < 0){
+                enterTimeLabel.setVisible(true);
+                return;
+                
+            }
+            
 
-					Optional<ButtonType> selection = alert.showAndWait();
-					if (selection.get() == buttonTypeSaveOffline){
-						saveOffline();
-					} else {
-					    // ... user chose CANCEL or closed the dialog
-					}*/
-					e.printStackTrace();
-					result = false;
-				}
-			}
-			if(result){
-				stage.hide();
-				frameMgr.setAnnotationsChanged(false);
-	    		new Alert(AlertType.CONFIRMATION, "Save Complete!").showAndWait();
-			}
-		});
-	}
+            if(!ConnectionSingleton.getConnectionInstance().Login(emailText.getText(), passwordText.getText())) {
+                    invalidLabel.setVisible(true);
+            }
+            else {
+
+                try {
+
+                    if(namesSets.containsKey(nameCombo.getSelectionModel().getSelectedItem())) {
+                        AnnotationSet set = namesSets.get(nameCombo.getSelectionModel().getSelectedItem());
+                        if(set != null && set.getName().length() > 0) {
+                            saver.saveAnnotations(frameMgr, set, finalVersionCheck.isSelected(), totalMinutes);
+                            result = true;
+                        }
+                        else {
+                            result = save(totalMinutes);
+                        }
+                    }
+                    else {
+                            result = save(totalMinutes);
+                    }
+                } catch (SQLException e) {
+
+                    new Alert(AlertType.ERROR, "Save Failed!").showAndWait();
+                    e.printStackTrace();
+                    result = false;
+                }
+            }
+            if(result){
+                stage.hide();
+                frameMgr.setAnnotationsChanged(false);
+            new Alert(AlertType.CONFIRMATION, "Save Complete!").showAndWait();
+            }
+        });
+        
+        finalVersionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                hoursText.setDisable(!newValue);
+                minutesText.setDisable(!newValue);
+            }
+        });
+    }
 	
 
 	
-	private void saveOffline() {
-		
-	
-	}
+    private boolean save(double totalMinutes) throws SQLException {
+        if(nameCombo.getSelectionModel().getSelectedItem().length() > 0) {
+            if(saver.nameNotUsed(nameCombo.getSelectionModel().getSelectedItem())) {
+                saver.saveAnnotations(frameMgr, this.emailText.getText(), nameCombo.getSelectionModel().getSelectedItem(), finalVersionCheck.isSelected(), totalMinutes);
+                return true;
+            } else {
+                nameExistsLabel.setVisible(true);
+                return false;
+            }
+        } else {
+            nameBlankLabel.setVisible(true);
+            return false;
+        }
 
+    }
 
-
-	private boolean save() throws SQLException {
-		if(nameCombo.getSelectionModel().getSelectedItem().length() > 0) {
-			if(saver.nameNotUsed(nameCombo.getSelectionModel().getSelectedItem())) {
-				saver.saveAnnotations(frameMgr, this.emailText.getText(), nameCombo.getSelectionModel().getSelectedItem(), finalVersionCheck.isSelected());
-				return true;
-			}
-			else {
-				nameExistsLabel.setVisible(true);
-				return false;
-			}
-		}
-		else {
-			nameBlankLabel.setVisible(true);
-			return false;
-		}
-			
-	}
-
-	public void setFrameMgr(FrameAnnotationManager frameMgr) {
-		this.frameMgr = frameMgr;
-		loadCombos();
-	}
+    public void setFrameMgr(FrameAnnotationManager frameMgr) {
+        this.frameMgr = frameMgr;
+        loadCombos();
+    }
 	
     public void setStage(Stage stage) {
     	this.stage = stage;
     }
 	
     public void loadCombos() {
-		saver = new AnnotationSaver();
-		try {
-			namesSets =  saver.getNameSets(frameMgr.getStrainTypeId());
-			ArrayList<String> names = new ArrayList<String>();
-			for (Map.Entry<String, AnnotationSet> entry : namesSets.entrySet()) {
-				names.add(entry.getKey());
-			}
-			nameCombo.setItems(FXCollections.observableArrayList(names));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        saver = new AnnotationSaver();
+        try {
+            namesSets =  saver.getNameSets(frameMgr.getStrainTypeId());
+            ArrayList<String> names = new ArrayList<String>();
+            for (Map.Entry<String, AnnotationSet> entry : namesSets.entrySet()) {
+                    names.add(entry.getKey());
+            }
+            nameCombo.setItems(FXCollections.observableArrayList(names));
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     public boolean getResult() {

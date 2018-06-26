@@ -7,12 +7,15 @@ package wormappsfx;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 /**
@@ -62,6 +65,7 @@ public class ChooseAppController implements Initializable {
             result = ChooseAppOptions.Cancel;
            ((Stage) cancelButton.getScene().getWindow()).close();
         });
+        
     }    
     
     public ChooseAppOptions getResult(){

@@ -1,6 +1,7 @@
 package annotationtoolfx.view;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -226,37 +227,47 @@ public class SelectDirPane  extends AnchorPane implements Initializable, WizardN
     	}
        	    	
         @Override public void run(){
-            String partialUrl = "http://140.192.247.106:8585/images/" + wormVideo + "/";
+            String partialUrl = annotationtoolfx.object.Constants.WormUrl + wormVideo + "/";
             int count = 0;
 
             String surl, toFile;
             for(String fileName : files) {
 
-      		surl = partialUrl + fileName;
-      		toFile = newDirectory + File.separator + fileName;
+                try {
+                    surl = partialUrl + fileName;
+                    toFile = newDirectory + File.separator + fileName;
 
-      		URL website;
-      		try {
+                    URL website;
                     website = new URL(surl);
-      	            ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-      	            FileOutputStream fos = new FileOutputStream(toFile);
-      	            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-      	            fos.close();
-      	            rbc.close();
-      	            count++;
+                    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+                    FileOutputStream fos = new FileOutputStream(toFile);
+                    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                    fos.close();
+                    rbc.close();
+                    count++;
                     Platform.runLater(new UpdateProgress(pane, count));
 
-      		
-      		} catch (MalformedURLException e) {
+
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
-      		} catch (IOException e) {
+                } catch (MalformedURLException e) {
                     e.printStackTrace();
-      		}
-      			
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
+
             Platform.runLater(new DownloadComplete(pane));
 
       		
+        }
+        
+        private void doDowload(ArrayList downloadList){
+            
+        }
+
+        private void tryWith7() {
         }
     }
 	

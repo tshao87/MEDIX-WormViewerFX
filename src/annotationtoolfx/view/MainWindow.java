@@ -108,6 +108,8 @@ public class MainWindow extends AnchorPane implements Initializable {
     @FXML
     private Label updatedAnnotationLabel;
     @FXML
+    private Label frameDoesntExistLabel;
+    @FXML
     private Label fpsValLabel;
 	@FXML
 	private CheckBox pauseOnDiffCheck;
@@ -274,12 +276,12 @@ public class MainWindow extends AnchorPane implements Initializable {
     	MainWindow videoPanel;
     	
         public GoToFrame(MainWindow panel) {
-        	videoPanel = panel;
-		}
+            videoPanel = panel;
+        }
 
-		@Override public void run(){
-        	videoPanel.goToFrame();
-		}
+        @Override public void run(){
+            videoPanel.goToFrame();
+        }
 
     }
     
@@ -444,27 +446,27 @@ public class MainWindow extends AnchorPane implements Initializable {
     		FXMLLoader loader = new FXMLLoader(getClass().getResource(resOpen));
     		Parent root;
 	
-			root = (Parent)loader.load();
-	
-			OpenVideoWizard ov = loader.getController();
+                    root = (Parent)loader.load();
 
-			Stage newWindow = new Stage();
-			ov.setStage(newWindow);
-			
-			newWindow.setTitle("Select Worm Video");
-			newWindow.setScene(new Scene(root, 600, 350));
-			newWindow.toFront();
-			newWindow.showAndWait();
-			
-			if(!ov.getResult())
-			{
-				wizardCanceled = true;
-				Platform.exit();
-				if(stage != null)
-					stage.close();
-				return;
-			}
-			frameMgr = ov.getFrameMgr();
+                    OpenVideoWizard ov = loader.getController();
+
+                    Stage newWindow = new Stage();
+                    ov.setStage(newWindow);
+
+                    newWindow.setTitle("Select Worm Video");
+                    newWindow.setScene(new Scene(root, 600, 350));
+                    newWindow.toFront();
+                    newWindow.showAndWait();
+
+                    if(!ov.getResult())
+                    {
+                            wizardCanceled = true;
+                            Platform.exit();
+                            if(stage != null)
+                                    stage.close();
+                            return;
+                    }
+                    frameMgr = ov.getFrameMgr();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -506,30 +508,30 @@ public class MainWindow extends AnchorPane implements Initializable {
 	}
     
     private void save() {
-		String res = "/annotationtoolfx/view/SaveAnnotations.fxml";
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(res));
-		Parent root;
-		try {
-	
-			root = (Parent)loader.load();
-	
-			SaveAnnotations sa = loader.getController();
+        String res = "/annotationtoolfx/view/SaveAnnotations.fxml";
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(res));
+        Parent root;
+        try {
 
-			Stage newWindow = new Stage();
-			sa.setStage(newWindow);
-			sa.setFrameMgr(frameMgr);
-			sa.loadCombos();
-			
-			newWindow.setTitle("Save Annotations");
-			newWindow.setScene(new Scene(root, 500, 230));
-			newWindow.toFront();
-			newWindow.showAndWait();
-    	} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            root = (Parent)loader.load();
+
+            SaveAnnotations sa = loader.getController();
+
+            Stage newWindow = new Stage();
+            sa.setStage(newWindow);
+            sa.setFrameMgr(frameMgr);
+            sa.loadCombos();
+
+            newWindow.setTitle("Save Annotations");
+            newWindow.setScene(new Scene(root, 500, 280));
+            newWindow.toFront();
+            newWindow.showAndWait();
+        } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+        }
 				
-	}
+    }
 
 	private void setBegToCurrentAnn() {
 		beginningFrame = currentIndex;
@@ -554,53 +556,56 @@ public class MainWindow extends AnchorPane implements Initializable {
     
     private void loadCurrentImage()
     {
-            FrameAnnotationInfo fai = frameMgr.get(currentIndex);
-	
-            while(fai == null & currentIndex < frameMgr.getCount()) {
-            	
-            	currentIndex++;
-            	fai = frameMgr.get(currentIndex);
-            }
-            	
-	        File f = fai.getImageFile();
-	        if(!f.exists())
-	        {
-	    		new Alert(Alert.AlertType.ERROR, "File " + f.getName()+ " does not exist").showAndWait();
-	        	pause();
-	        	return;
-	        }
-	
-	        if (pauseOnDiffCheck.isSelected())
-	        {
-	            if (frameMgr.get(currentIndex).hasBothAnnotations() && !frameMgr.get(currentIndex).doAnnotationsMatch())
-	            {
-	            	if(playback != null)
-	            		if (playback.run.get() == 1)
-	            			pause();
-	            }
-	        }
-	 
-	        wormImageView.setImage(new Image(f.toURI().toString()));
-	
-	        this.frameNoText.setText(fai.getFrameNoAsString());
-	        this.frameNoValueLabel.setText(fai.getFrameNoAsString());
-	        this.elapsedTimeValueLabel.setText(fai.getElapsedTime());
-	        this.humanAnnValueLabel.setText(fai.getHumanAnnotation());
-	        this.predictedAnnValueLabel.setText(fai.getPredictedAnnotation());
-	        this.updatedAnnValueLabel.setText(fai.getUpdatedAnnotation());
-	
-	        annotationsTableView.scrollTo(faiDisplayByfai.get(frameMgr.get(currentIndex)));
+        
+        frameDoesntExistLabel.setVisible(false);
 
-			if(inprogress) {
-				endFrame = currentIndex;
-				endAnnText.setText(Integer.toString(endFrame));
-			}
+        FrameAnnotationInfo fai = frameMgr.get(currentIndex);
+
+        while(fai == null & currentIndex < frameMgr.getCount()) {
+
+            currentIndex++;
+            fai = frameMgr.get(currentIndex);
+        }
+
+            File f = fai.getImageFile();
+            if(!f.exists())
+            {
+                frameDoesntExistLabel.setVisible(true);
+                pause();
+                return;
+            }
+
+            if (pauseOnDiffCheck.isSelected())
+            {
+                if (frameMgr.get(currentIndex).hasBothAnnotations() && !frameMgr.get(currentIndex).doAnnotationsMatch())
+                {
+                    if(playback != null)
+                            if (playback.run.get() == 1)
+                                    pause();
+                }
+            }
+
+            wormImageView.setImage(new Image(f.toURI().toString()));
+
+            this.frameNoText.setText(fai.getFrameNoAsString());
+            this.frameNoValueLabel.setText(fai.getFrameNoAsString());
+            this.elapsedTimeValueLabel.setText(fai.getElapsedTime());
+            this.humanAnnValueLabel.setText(fai.getHumanAnnotation());
+            this.predictedAnnValueLabel.setText(fai.getPredictedAnnotation());
+            this.updatedAnnValueLabel.setText(fai.getUpdatedAnnotation());
+
+            annotationsTableView.scrollTo(faiDisplayByfai.get(frameMgr.get(currentIndex)));
+
+            if(inprogress) {
+                endFrame = currentIndex;
+                endAnnText.setText(Integer.toString(endFrame));
+            }
 
     }
 
-	public FrameAnnotationManager getFrameMgr() {
-		return frameMgr;
-	}
+    public FrameAnnotationManager getFrameMgr() {
+            return frameMgr;
+    }
 
     void moveForward() {
         currentIndex++;
@@ -655,13 +660,13 @@ public class MainWindow extends AnchorPane implements Initializable {
 
 	private void goToFrame() {
     	try {
-	        int frameNo = Integer.parseInt(frameNoText.getText());
-		
-	        if (frameMgr.isFrameInRange(frameNo))
-	        {
-	            currentIndex = frameNo;
-	            loadCurrentImage();
-	        }
+            int frameNo = Integer.parseInt(frameNoText.getText());
+
+            if (frameMgr.isFrameInRange(frameNo))
+            {
+                currentIndex = frameNo;
+                loadCurrentImage();
+            }
     	}
     	catch(NumberFormatException e) {
     		

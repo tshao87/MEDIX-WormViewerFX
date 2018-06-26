@@ -99,6 +99,7 @@ public class FrameManagerLoader {
 		HashMap<String, FrameAnnotationInfo> map = new HashMap<String, FrameAnnotationInfo>();
 	
 		ResultSet rs = null, rs1 = null;
+                String header = Utilities.getPrefixZeros(strainId);
 		
 		try {
 		
@@ -180,9 +181,10 @@ public class FrameManagerLoader {
 					}
 				}
 		    	String s = String.format("%d", rs.getInt(2)).toString();
-		    	s = ("000000" + s).substring(s.length());
+		    	s = (header + s).substring(s.length());
 		    	
 		    	fai.setImageFile(new File(String.format("%s/%s.jpeg", wormImageDirectory.getAbsolutePath(), s)));
+                        
 			}
 			
 			String line;
@@ -262,6 +264,8 @@ public class FrameManagerLoader {
 	public void setOfflineAnnFile(File offlineAnnFile) {
 		this.offlineAnnFile = offlineAnnFile;
 	}
+
+
 
 	
 }

@@ -94,7 +94,7 @@ public class Utils {
         LinkedList<String> imagePathList = new LinkedList<>();
 //        String dataSetName = convertStarinTypeIdToDatasetName(StrainTypeId);
         String dataSetName = StrainTypeId.toUpperCase();
-        String inputHost = "http://140.192.247.106:8585/images/*****/";
+        String inputHost = "http://140.192.247.115:8585/images/*****/";
         inputHost = inputHost.replace("*****", dataSetName);
         System.out.println(inputHost);
         String format = "%07d.jpeg";

@@ -14,6 +14,6 @@ public class Constants {
     public static final String SixZeros = "000000";
     public static final String SevenZeros = "0000000";
     
-    public static final String WormUrl = "http://140.192.247.106:8585/images/";
+    public static final String WormUrl = "http://140.192.247.115:8585/images/";
     
 }

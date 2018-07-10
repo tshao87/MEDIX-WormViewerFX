@@ -9,7 +9,7 @@ import java.sql.Connection;
 public class ConnectionSingleton {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:postgresql://cdmmedixsrv.cdm.depaul.edu:5432/c_elegans_v6";
+    static final String DB_URL = "jdbc:postgresql://140.192.247.115:5432/c_elegans_v6";
 
     //  Database credentials
 //    static final String USER = "postgres";

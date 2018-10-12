@@ -1,5 +1,6 @@
 package annotationtoolfx.db;
 
+import annotationtoolfx.object.FileNameInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -81,178 +82,167 @@ public class FrameManagerLoader {
 		this.editAnnSet = editAnnSet;
 	}
 
+        public boolean AddAnnotations(boolean compare, HashMap<String, FrameAnnotationInfo> map){
+            String queryAnn = "SELECT frameid, annotation FROM annotations WHERE annotations.setid = ?"; 
+
+            ResultSet rs = null;
+            PreparedStatement stmt = null;
+            String frameNoStr;
+            try
+            {
+                stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(queryAnn);
+                if(compare)
+                {
+                    stmt.setString(1, getSetIdFromName(compareAnnSet));
+                }                   
+                else{
+                    stmt.setString(1, getSetIdFromName(editAnnSet));
+                }                   
+                rs = stmt.executeQuery();
+                while(rs.next()){
+                    frameNoStr = rs.getString(1);
+                    String[] list = frameNoStr.split("_");
+                    frameNoStr = list[list.length-1];
+                    
+                    if(map.containsKey(frameNoStr)){
+                        if(compare)
+                            map.get(frameNoStr).setHumanAnnotation(rs.getString(2));
+                        else
+                            map.get(frameNoStr).setUpdatedAnnotation(rs.getString(2));
+                    }
+                }
+            }
+            catch(Exception e){
+                    return false;  
+            }
+            finally {
+                try
+                {
+                    rs.close();
+                    stmt.close();;
+                }
+                catch(Exception e){
+
+                }
+            }
+            return true;
+        }
+        
 	public boolean LoadAnnFrameMgr() {
-		String query2Ann = "SELECT imageinfo.frameid, imagenumber, timeelapsed, annotation, setid FROM imageinfo " + 
-				"JOIN Annotations ON imageinfo.frameid = Annotations.frameid AND (Annotations.setid = ? OR Annotations.setid = ?) AND imageinfo.straintypeid = ? " + 
-				"ORDER BY imageinfo.imagenumber";
-		String query1Ann = "SELECT imageinfo.frameid, imagenumber, timeelapsed, annotation, setid FROM imageinfo " + 
-				"JOIN Annotations ON imageinfo.frameid = Annotations.frameid AND Annotations.setid = ? AND imageinfo.straintypeid = ? " + 
-				"ORDER BY imageinfo.imagenumber;";
-		String query0Ann = "SELECT imageinfo.frameid, imagenumber, timeelapsed FROM imageinfo WHERE straintypeid = ? ORDER BY imagenumber";
 
-		String annSetQuery = "SELECT setid FROM annotationset WHERE name = ?";
-
+		String queryNoAnn = "SELECT imageinfo.frameid, imagenumber, timeelapsed FROM imageinfo " + 
+				"WHERE imageinfo.straintypeid = ? ORDER BY imageinfo.imagenumber;";
 		PreparedStatement stmt = null;
-		PreparedStatement annSetStmt = null;
-		
 		ArrayList<FrameAnnotationInfo> list = new ArrayList<FrameAnnotationInfo>();
 		HashMap<String, FrameAnnotationInfo> map = new HashMap<String, FrameAnnotationInfo>();
-	
-		ResultSet rs = null, rs1 = null;
-                String header = Utilities.getPrefixZeros(strainId);
-		
-		try {
-		
-			boolean compare = compareAnnSet != null  && compareAnnSet.length() > 0;
-			boolean edit = editAnnSet != null  && editAnnSet.length() > 0;
-			if(offlineAnnFile != null &&  offlineAnnFile.exists()) {
-				compare = false;
-				edit = false;
-			}
-			
-			//Get setids
-			annSetStmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(annSetQuery);
-			if(compare) {
-				annSetStmt.setString(1, compareAnnSet);
-		    	rs1 = annSetStmt.executeQuery();
-		    	rs1.next();
-		    	compareAnnSet = rs1.getString(1);
-		    	rs1.close();
-			}	    	
 
-			if(edit) {
-				annSetStmt.setString(1, editAnnSet);
-		    	rs1 = annSetStmt.executeQuery();
-		    	rs1.next();
-		    	editAnnSet = rs1.getString(1);
-			}
-	    	
-			String query = "";
-			if(compare && edit)
-				query = query2Ann;
-			else if(compare || edit)
-				query = query1Ann;
-			else
-				query = query0Ann;
-			
-			stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(query);
-			
-			int index = 0;
-			
-			if(compare) {
-				index += 1;
-				stmt.setString(index, compareAnnSet);
-			}
-			if(edit) {
-				index += 1;
-				stmt.setString(index, editAnnSet);
-			}
-			index += 1;
-			stmt.setString(index, strainId);
-			rs = stmt.executeQuery();
+		ResultSet rs = null;
+                FileNameInfo info = Utilities.getFileComponents(strainId);
+                
+                boolean compare = compareAnnSet != null  && compareAnnSet.length() > 0;
+                boolean edit = editAnnSet != null  && editAnnSet.length() > 0;
+                if(offlineAnnFile != null &&  offlineAnnFile.exists()) {
+                    compare = false;
+                    edit = false;
+                }
+
+                String frameNoStr;
+                try
+                {
+                    stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(queryNoAnn);
+                    stmt.setString(1, strainId);
+                    rs = stmt.executeQuery();
 	
-			String set;
-			int frameNo = 0;
-			String frameNoStr;
-			FrameAnnotationInfo fai;
-			while(rs.next()){
-				frameNo = rs.getInt(2);
-				frameNoStr = Integer.toString(frameNo);
-				if(!map.containsKey(frameNoStr)) {
+                    String set;
+                    int frameNo = 0;
+                    FrameAnnotationInfo fai;
+                    while(rs.next()){
+                        frameNo = rs.getInt(2);
+                        frameNoStr = Integer.toString(frameNo);
+                        if(!map.containsKey(frameNoStr)) {
 		           
-					fai = new FrameAnnotationInfo();
+                            fai = new FrameAnnotationInfo();
 		            fai.setElapsedTime(String.format("%f", rs.getDouble(3)));
 		            fai.setFrameNo(rs.getInt(2));
 		            fai.setdbFrameId(rs.getString(1));
-			    	list.add(fai);			    	
-					map.put(frameNoStr, fai);
-				}
-				else {
-					fai = map.get(frameNoStr);
-				}
+                            list.add(fai);			    	
+                            map.put(frameNoStr, fai);
+                        }
+                        else {
+                            fai = map.get(frameNoStr);
+                        }
 
-				if(compare || edit) {
-					set = rs.getString(5);
-					if(set.equals(compareAnnSet)) {
-						fai.setHumanAnnotation(rs.getString(4));
-					}
-					else if (set.equals(editAnnSet)) {
-						fai.setUpdatedAnnotation(rs.getString(4));
-					}
-				}
 		    	String s = String.format("%d", rs.getInt(2)).toString();
-		    	s = (header + s).substring(s.length());
+		    	s = (info.Prefix + s).substring(s.length()) + info.Extension;
 		    	
-		    	fai.setImageFile(new File(String.format("%s/%s.jpeg", wormImageDirectory.getAbsolutePath(), s)));
-                        
-			}
-			
-			String line;
-			String[] values;
-			String frameId;
-			String val;
-			FileReader fileReader;
-			BufferedReader bufferedReader = null;
+		    	fai.setImageFile(new File(String.format("%s/%s", wormImageDirectory.getAbsolutePath(), s)));
+                    }			
 
-			if(offlineAnnFile != null && offlineAnnFile.exists()) {
-				fileReader = new FileReader(offlineAnnFile);
-				bufferedReader = new BufferedReader(fileReader);
-				while((line = bufferedReader.readLine()) != null) {
-					values = line.split(",");
-					frameId = values[0].trim();
-					if(map.containsKey(frameId)) {
-						fai = map.get(frameId);
-						val = values[1].trim();
-						if(val.length() > 0)
-							fai.setHumanAnnotation(val);
-						val = values[2].trim();
-						if(val.length() > 0)
-							fai.setPredictedAnnotation(val);
-						val = values[3].trim();
-						if(val.length() > 0)
-							fai.setUpdatedAnnotation(val);
-					}
-				}
-		    	bufferedReader.close();
-		    	fileReader.close();
+                    String line;
+                    String[] values;
+                    String frameId;
+                    String val;
+                    FileReader fileReader;
+                    BufferedReader bufferedReader = null;
 
-			}
-			else if(predictedAnnFile != null && predColIndex > -1) {
-				fileReader = new FileReader(predictedAnnFile);
-				bufferedReader = new BufferedReader(fileReader);
+                    if(offlineAnnFile != null && offlineAnnFile.exists()) {
+                        fileReader = new FileReader(offlineAnnFile);
+                        bufferedReader = new BufferedReader(fileReader);
+                        while((line = bufferedReader.readLine()) != null) {
+                            values = line.split(",");
+                            frameId = values[0].trim();
+                            if(map.containsKey(frameId)) {
+                                fai = map.get(frameId);
+                                val = values[1].trim();
+                                if(val.length() > 0)
+                                        fai.setHumanAnnotation(val);
+                                val = values[2].trim();
+                                if(val.length() > 0)
+                                        fai.setPredictedAnnotation(val);
+                                val = values[3].trim();
+                                if(val.length() > 0)
+                                        fai.setUpdatedAnnotation(val);
+                            }
+                        }
+                        bufferedReader.close();
+                        fileReader.close();
+                    }
+                    else if(predictedAnnFile != null && predColIndex > -1) {
+                            fileReader = new FileReader(predictedAnnFile);
+                            bufferedReader = new BufferedReader(fileReader);
 
-		    	if(predictedAnnFile != null) {
-					while((line = bufferedReader.readLine()) != null) {
-						values = line.split(",");
-						frameId = values[0].trim();
-						if(map.containsKey(frameId)) {
-							fai = map.get(frameId);
-							fai.setPredictedAnnotation(values[predColIndex]);
-						}
-					}
-		    	}
-		    	bufferedReader.close();
-		    	fileReader.close();
-			}
-		}
-		catch(Exception e){
+                    if(predictedAnnFile != null) {
+                        while((line = bufferedReader.readLine()) != null) {
+                                values = line.split(",");
+                                frameId = values[0].trim();
+                                if(map.containsKey(frameId)) {
+                                        fai = map.get(frameId);
+                                        fai.setPredictedAnnotation(values[predColIndex]);
+                                }
+                        }
+                    }
+                    bufferedReader.close();
+                    fileReader.close();
+                    }
+                }
+                catch(Exception e){
 			return false;  
 		}
 		finally {
-			try
-			{
-		      rs.close();
-		      rs1.close();
-		      stmt.close();
-		      annSetStmt.close();
-			}
-			catch(Exception e){
-				
-			}
+                    try
+                    {
+                        rs.close();
+                        stmt.close();;
+                    }
+                    catch(Exception e){
+
+                    }
 		}
-		
-		
-		
+
+                if(compare)
+                    AddAnnotations(true, map);
+                if(edit)
+                    AddAnnotations(false, map);
 		
 		if(editAnnSet != null && editAnnSet.trim().length() > 0)
 			frameMgr = new FrameAnnotationManager(list, strainId, editAnnSet);
@@ -264,6 +254,24 @@ public class FrameManagerLoader {
 	public void setOfflineAnnFile(File offlineAnnFile) {
 		this.offlineAnnFile = offlineAnnFile;
 	}
+
+        private String getSetIdFromName(String annSetName) {
+            ResultSet rs = null;
+            PreparedStatement stmt = null;
+            String id = null;
+            try
+            {
+                stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement("SELECT setid FROM Annotationset WHERE name = ?");
+                stmt.setString(1, annSetName);
+                rs = stmt.executeQuery();
+                rs.next();
+                id = rs.getString(1);;
+            }
+            catch(Exception e){
+
+            }
+            return id;
+    }
 
 
 

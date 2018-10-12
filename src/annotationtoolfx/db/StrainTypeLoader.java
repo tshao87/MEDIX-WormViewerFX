@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import annotationtoolfx.object.AnnotationSet;
+import annotationtoolfx.object.FileNameInfo;
 import annotationtoolfx.view.WormVideoDisplay;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -203,7 +204,7 @@ public class StrainTypeLoader {
 
             String query = "SELECT imagenumber FROM imageinfo WHERE straintypeid = ? ORDER BY imagenumber";
 
-            String prefix = Utilities.getPrefixZeros(wormVideo);
+            FileNameInfo fni = Utilities.getFileComponents(wormVideo);
             
 	    PreparedStatement stmt;
             try {
@@ -213,9 +214,9 @@ public class StrainTypeLoader {
                 while(rs.next()){
                  //Retrieve by column name
                     String s = String.format("%d", rs.getInt(1)).toString();
-                    s = (prefix + s).substring(s.length());
+                    s = (fni.Prefix + s).substring(s.length());
 
-                    list.add(s + ".jpeg");
+                    list.add(s + fni.Extension);
                 }
 
             } catch (SQLException e) {

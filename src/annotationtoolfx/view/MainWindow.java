@@ -1,5 +1,6 @@
 package annotationtoolfx.view;
 
+import annotationtoolfx.db.ConnectionSingleton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -46,6 +47,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import singleton.ConnectionManager;
 
 public class MainWindow extends AnchorPane implements Initializable {
 	
@@ -139,126 +141,127 @@ public class MainWindow extends AnchorPane implements Initializable {
     private Stage stage;
     
     private FrameAnnotationManager frameMgr;
-	int currentIndex;
-	VideoPlayback playback;
-	HashMap<FrameAnnotationInfo, FrameAnnotationInfoDisplay> faiDisplayByfai;
-	ArrayList<FrameAnnotationInfoDisplay> faidList;
-	ObservableList<FrameAnnotationInfoDisplay> faidDisplayList;
-	//Annotation
-	private int beginningFrame;
-	private int endFrame;
-	private boolean inprogress = false;
-	private boolean wizardCanceled = false;
-	
-	private Background annModeValue;
-	private Background watchModeValue;
-	
-	public static class FrameAnnotationInfoDisplay implements UpdateObserver {
-		
-		private final SimpleStringProperty frameNumber;
-		private final SimpleStringProperty expertAnn;
-		private final SimpleStringProperty predictedAnn;
-		private final SimpleStringProperty updatedAnn;
-		
-		private FrameAnnotationInfo fai;
-		
-		public String getFrameNumber() {
-			return frameNumber.get();
-		}
-		
-		public void setFrameNumber(String value) {
-			frameNumber.set(value);
-		}
+    int currentIndex;
+    VideoPlayback playback;
+    HashMap<FrameAnnotationInfo, FrameAnnotationInfoDisplay> faiDisplayByfai;
+    ArrayList<FrameAnnotationInfoDisplay> faidList;
+    ObservableList<FrameAnnotationInfoDisplay> faidDisplayList;
+    //Annotation
+    private int beginningFrame;
+    private int endFrame;
+    private boolean inprogress = false;
+    private boolean wizardCanceled = false;
 
-		public String getExpertAnn() {
-			return expertAnn.get();
-		}
-		
-		public void setExpertAnn(String value) {
-			expertAnn.set(value);
-		}
+    private Background annModeValue;
+    private Background watchModeValue;
+   
 
-		public String getPredictedAnn() {
-			return predictedAnn.get();
-		}
+    public static class FrameAnnotationInfoDisplay implements UpdateObserver {
 
-		public void setPredictedAnn(String value) {
-			predictedAnn.set(value);
-		}
-		
-		public String getUpdatedAnn() {
-			return updatedAnn.get();
-		}
-		
-		public void setUpdatedAnn(String value) {
-			updatedAnn.set(value);
-		}
+            private final SimpleStringProperty frameNumber;
+            private final SimpleStringProperty expertAnn;
+            private final SimpleStringProperty predictedAnn;
+            private final SimpleStringProperty updatedAnn;
 
-		public FrameAnnotationInfoDisplay(FrameAnnotationInfo fai) {
-			this.fai = fai;
-			frameNumber = new SimpleStringProperty(fai.getFrameNoAsString());
-			expertAnn = new SimpleStringProperty(fai.getHumanAnnotation());
-			predictedAnn = new SimpleStringProperty(fai.getPredictedAnnotation());
-			updatedAnn = new SimpleStringProperty(fai.getUpdatedAnnotation());
-			
-			update();
-			this.fai.Register(this);
-		}
+            private FrameAnnotationInfo fai;
 
-		@Override
-		public void update() {
-			frameNumber.set(fai.getFrameNoAsString());
-			expertAnn.set(fai.getHumanAnnotation());
-			predictedAnn.set(fai.getPredictedAnnotation());
-			String s = fai.getUpdatedAnnotation();
-			updatedAnn.set(s);
-			
-		}
-		
-		// this method will be used by the PropertyValueFactory
-		// and returns a Property which notifies TableView of changes
-		public StringProperty frameNoProperty() {
-		    return frameNumber;
-		}
-		
-		public StringProperty updatedAnnProperty() {
-		    return updatedAnn;
-		}	
-		
-	}
-	
-	class VideoPlayback extends Thread {
-		MainWindow videoPanel;
-    	AtomicInteger run;
-    	private int delay;
-    	
-    	public VideoPlayback(MainWindow panel, int timeDelay) {
-        	videoPanel = panel;
-    		delay = timeDelay;
-    		run = new AtomicInteger();
-    		run.set(1);
-    	}
-    	
-    	public void stopPlayback() {
-    		run.set(0);
-    	}
-       	    	
-        @Override public void run(){
-          try {
-        	  Platform.runLater(new GoToFrame(videoPanel));
-              while (run.get() == 1)
-              {
-            	  Platform.runLater(new MoveForward(videoPanel));
-                  Thread.sleep((int)delay);
-              }
+            public String getFrameNumber() {
+                    return frameNumber.get();
+            }
 
+            public void setFrameNumber(String value) {
+                    frameNumber.set(value);
+            }
+
+            public String getExpertAnn() {
+                    return expertAnn.get();
+            }
+
+            public void setExpertAnn(String value) {
+                    expertAnn.set(value);
+            }
+
+            public String getPredictedAnn() {
+                    return predictedAnn.get();
+            }
+
+            public void setPredictedAnn(String value) {
+                    predictedAnn.set(value);
+            }
+
+            public String getUpdatedAnn() {
+                    return updatedAnn.get();
+            }
+
+            public void setUpdatedAnn(String value) {
+                    updatedAnn.set(value);
+            }
+
+            public FrameAnnotationInfoDisplay(FrameAnnotationInfo fai) {
+                    this.fai = fai;
+                    frameNumber = new SimpleStringProperty(fai.getFrameNoAsString());
+                    expertAnn = new SimpleStringProperty(fai.getHumanAnnotation());
+                    predictedAnn = new SimpleStringProperty(fai.getPredictedAnnotation());
+                    updatedAnn = new SimpleStringProperty(fai.getUpdatedAnnotation());
+
+                    update();
+                    this.fai.Register(this);
+            }
+
+            @Override
+            public void update() {
+                    frameNumber.set(fai.getFrameNoAsString());
+                    expertAnn.set(fai.getHumanAnnotation());
+                    predictedAnn.set(fai.getPredictedAnnotation());
+                    String s = fai.getUpdatedAnnotation();
+                    updatedAnn.set(s);
+
+            }
+
+            // this method will be used by the PropertyValueFactory
+            // and returns a Property which notifies TableView of changes
+            public StringProperty frameNoProperty() {
+                return frameNumber;
+            }
+
+            public StringProperty updatedAnnProperty() {
+                return updatedAnn;
+            }	
+
+    }
+
+    class VideoPlayback extends Thread {
+            MainWindow videoPanel;
+    AtomicInteger run;
+    private int delay;
+
+    public VideoPlayback(MainWindow panel, int timeDelay) {
+            videoPanel = panel;
+            delay = timeDelay;
+            run = new AtomicInteger();
+            run.set(1);
+    }
+
+    public void stopPlayback() {
+            run.set(0);
+    }
+
+    @Override public void run(){
+      try {
+              Platform.runLater(new GoToFrame(videoPanel));
+          while (run.get() == 1)
+          {
+              Platform.runLater(new MoveForward(videoPanel));
+              Thread.sleep((int)delay);
           }
-          catch (InterruptedException ex) {
-  			ex.printStackTrace();
-		}
-        }
+
       }
-    
+      catch (InterruptedException ex) {
+                    ex.printStackTrace();
+            }
+    }
+  }
+
     class MoveForward implements Runnable {
     	MainWindow videoPanel;
     	
@@ -337,6 +340,8 @@ public class MainWindow extends AnchorPane implements Initializable {
 		}
 	}
 	  
+        
+   
     @Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -410,6 +415,7 @@ public class MainWindow extends AnchorPane implements Initializable {
 
     	nextButton.setOnAction((event)-> {
    		 frameNoText.setText(Integer.toString(frameMgr.findNonMatchAfter(currentIndex)));
+   		 frameNoText.setText(Integer.toString(frameMgr.findNeedsReview(currentIndex)));
 			  goToFrame();
 		});
     	
@@ -442,6 +448,58 @@ public class MainWindow extends AnchorPane implements Initializable {
 		delayText.setText("40");
 		setAnnDisabled(true);
     	try {
+            
+            if(ConnectionSingleton.getConnectionInstance().GetSkipAll())
+            { 
+                LoadingControlManager mgr = new LoadingControlManager();
+                mgr.setRevise(true);
+
+               mgr.setWormImageDirectory(new File("C:\\Users\\jenny\\Documents\\C. elegans\\Videos\\N2_nf20"));
+              mgr.setStrainTypeId("N2_LR_nf_20");
+                mgr.setCompareaAnnSet("n2_n20_low");
+                mgr.setCompareaAnnSet("n2_n20_low_Rev2");
+
+               mgr.setWormImageDirectory(new File("C:\\Users\\jenny\\Documents\\C. elegans\\Videos\\N2_HR_nf_10"));
+                mgr.setStrainTypeId("N2_HR_nf_10");
+                mgr.setCompareaAnnSet("N2_nfHr_10_ann");
+                mgr.setCompareaAnnSet("N2_nfHr_10_ann_Rev22");
+                mgr.setCompareaAnnSet("N2_nfHr_10_ann_Rev333");
+
+                mgr.setWormImageDirectory(new File("C:\\Users\\jenny\\Documents\\C. elegans\\Videos\\tph1_f_8"));
+                mgr.setStrainTypeId("N2_LR_nf_4");
+                mgr.setCompareaAnnSet("cleanup-jp2");
+         //       mgr.setCompareaAnnSet("cleanup-jp2_LDMPRBM2");
+ //               mgr.setCompareaAnnSet("cleanup-jp2_LD3");
+            //    mgr.setCompareaAnnSet("cleanup-jp2_LD4");
+
+                mgr.setStrainTypeId("N2_LR_nf_4");
+                mgr.setCompareaAnnSet("N2_nf4_12-8-18");
+
+                mgr.setStrainTypeId("N2_LR_f_1");
+                mgr.setCompareaAnnSet("N2_f1_annotations");
+                mgr.setStrainTypeId("tph1_LR_f_8");
+                mgr.setCompareaAnnSet("10-3-18-final");
+                
+
+//              mgr.setCompareaAnnSet("N2_nf4_12-8-18_LDMPRBM2");
+/*                mgr.setCompareaAnnSet("N2_nf4_12-8-18_Rev3");
+
+                mgr.setWormImageDirectory(new File("C:\\Users\\jenny\\Documents\\C. elegans\\Videos\\N2_HR_nf_20"));
+                mgr.setStrainTypeId("N2_HR_nf_20");
+               mgr.setCompareaAnnSet("N2_nf20_HR_ann");
+                mgr.setCompareaAnnSet("N2_nf20_HR_ann_Rev2");
+                mgr.setCompareaAnnSet("N2_nf20_HR_ann_Rev3");
+
+                mgr.setWormImageDirectory(new File("C:\\Users\\jenny\\Documents\\C. elegans\\Videos\\N2_nf25"));
+                mgr.setStrainTypeId("N2_LR_nf_25");
+                mgr.setCompareaAnnSet("N2_nf25_final");
+              //  mgr.setCompareaAnnSet("N2_nf25_final_R2");
+*/
+                mgr.setPredictionColumn(-1);
+                mgr.loadFrameMgr();
+                frameMgr = mgr.getFrameMgr();
+            }
+            else{
     		String resOpen = "/annotationtoolfx/view/OpenVideoWizard.fxml";
     		FXMLLoader loader = new FXMLLoader(getClass().getResource(resOpen));
     		Parent root;
@@ -467,6 +525,7 @@ public class MainWindow extends AnchorPane implements Initializable {
                             return;
                     }
                     frameMgr = ov.getFrameMgr();
+            }
 			
 		} catch (IOException e) {
 			e.printStackTrace();

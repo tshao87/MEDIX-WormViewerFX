@@ -313,7 +313,7 @@ public class WormViewerFXStaticController implements Initializable {
     private void saveMasterFile(String filename){
         try{
 //            String dataSetName = convertStarinTypeIdToDatasetName(ConfigurationManager.getConfigurationManager().getConfiguration().getStrainTypeId());
-            String inputPath = "http://140.192.247.115:8585/data/*****/masterFile.csv";
+            String inputPath = "http://140.192.247.25:8585/data/*****/masterFile.csv";
 //            inputPath = inputPath.replace("*****", dataSetName);
             inputPath = inputPath.replace("*****", ConfigurationManager.getConfigurationManager().getConfiguration().getStrainTypeId().toUpperCase());
             System.out.println(inputPath);

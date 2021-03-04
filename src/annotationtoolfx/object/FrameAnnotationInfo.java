@@ -21,6 +21,8 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
     private String frameNoStr;
     private String dbFrameId;
     private String elapsedTime;
+    private double speed;
+    private boolean reviewed;
     private File imageFile;
     private String humanAnnotation;
     private String predictedAnnotation;
@@ -58,7 +60,17 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
     public void setdbFrameId(String id) {
     	dbFrameId = id;
     }
+    
+    public void setSpeed(double spd)
+    {
+        speed = spd;
+    }
 
+    public double getSpeed()
+    {
+        return speed;
+    }
+    
     public void setFrameNo(int value) {
         frameNo = value;
         frameNoStr = Integer.toString(value);  
@@ -111,13 +123,16 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
             else
                 av.longVal = AnnotationLongValue.Unknown;
         }
+        else if (lower.contains(SHARP))
+        {
+            av.shortVal = AnnotationShortValue.Turn;
+                av.longVal = AnnotationLongValue.ForwardSharp;
+        }
         else if (lower.contains(FORWARD))
         {
             av.shortVal = AnnotationShortValue.Forward;
             if (lower.contains(SHALLOW))
                 av.longVal = AnnotationLongValue.ForwardShallow;
-            else if (lower.contains(SHARP))
-                av.longVal = AnnotationLongValue.ForwardSharp;
             else if (lower.contains(NTD))
                 av.longVal = AnnotationLongValue.ForwardNTD;
             else
@@ -136,6 +151,20 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
         return humanAnnotation;
     }
 
+    public AnnotationShortValue getHumanShortAnnotation() {
+        return humanAnnotationShort;
+    }
+
+    public void setHumanAnnotation(String value, boolean rev)
+    {
+        setHumanAnnotation(value);
+        reviewed = rev;
+    }
+    
+    public boolean getReviewed(){
+        return reviewed;
+    }
+    
     public void setHumanAnnotation(String value) {
         humanAnnotation = value;
 
@@ -153,18 +182,25 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
         return predictedAnnotation;
     }
 
-    public void setPredictedAnnotation(String value) {
-        predictedAnnotation = value;
+    public boolean setPredictedAnnotation(String value) {
+        if(value == null)
+            return false;
+        
+        
         
         AnnotationValues av = getAnnValues(value);
         predictedAnnotationLong = av.longVal;
         predictedAnnotationShort = av.shortVal;
+        if(reviewed && av.longVal == AnnotationLongValue.NeedsReview)
+            return false;
+        predictedAnnotation = value;
+        
 
         predictedDiffUpdated = findPredDifferentUpdated();
 
         if(updateObserver != null)
         	updateObserver.update();
-            
+            return true;
     }
 
     public String getUpdatedAnnotation()
@@ -172,12 +208,25 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
         return updatedAnnotation;
     }
 
+    public void setUpdatedAnnotation(String value, boolean rev){
+        setUpdatedAnnotation(value);
+        reviewed = rev;
+    }
+    
     public void setUpdatedAnnotation(String value){
         updatedAnnotation = value;
         
         AnnotationValues av = getAnnValues(value);
         updatedAnnotationLong = av.longVal;
         updatedAnnotationShort = av.shortVal;
+        
+        if(predictedAnnotationLong == AnnotationLongValue.Unknown)
+        {
+            if(humanAnnotationLong == av.longVal)
+            {
+                reviewed = true;
+            }
+        }
 
         predictedDiffUpdated = findPredDifferentUpdated();
 
@@ -203,6 +252,11 @@ public class FrameAnnotationInfo implements Comparable<FrameAnnotationInfo> {
         return predictedDiffUpdated;
     }
 
+    public boolean IsNeedsReview()
+    {
+        return predictedAnnotation.contains("NeedsReview");
+    }
+    
     public boolean doAnnotationsMatch() {
         return (humanAnnotationLong == predictedAnnotationLong) ||
             (humanAnnotationShort == predictedAnnotationShort && predictedAnnotationLong == AnnotationLongValue.Unknown) ||

@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
@@ -21,6 +22,8 @@ public class SelectCompAnnFrame  extends AnchorPane implements Initializable, Wi
 	private RadioButton setSelectRadio;
 	@FXML
 	private RadioButton dontLoadRadio;
+	@FXML
+	private CheckBox autoReviseCheck;
 	@FXML
 	private ListView<String> finishedAnnotations;
 
@@ -66,18 +69,20 @@ public class SelectCompAnnFrame  extends AnchorPane implements Initializable, Wi
 	public boolean next() {
 
 		Toggle new_toggle = group.getSelectedToggle() ;
-        if (group.getSelectedToggle() != null) {
-        	RadioOptions ro = (RadioOptions)new_toggle.getUserData();
-        	if(ro != null) {
-        		if(ro == RadioOptions.load) {
-        			controlMgr.setCompareaAnnSet(finishedAnnotations.getSelectionModel().getSelectedItem());
-        		}
-        		else {
-        			controlMgr.setCompareaAnnSet(null);
-        		}
-        	}
-        }
-		return true;
+            if (group.getSelectedToggle() != null) {
+                    RadioOptions ro = (RadioOptions)new_toggle.getUserData();
+                    if(ro != null) {
+                            if(ro == RadioOptions.load) {
+                                    controlMgr.setCompareaAnnSet(finishedAnnotations.getSelectionModel().getSelectedItem());
+                            }
+                            else {
+                                controlMgr.setCompareaAnnSet(null);
+                            }
+                    }
+            }
+            controlMgr.setRevise(autoReviseCheck.isSelected());
+
+            return true;
 	}
 
 	@Override
@@ -113,7 +118,7 @@ public class SelectCompAnnFrame  extends AnchorPane implements Initializable, Wi
 
 	public enum RadioOptions{
 		load,
-		dontLoad,
+		dontLoad
 	}
 
 	@Override
@@ -124,6 +129,7 @@ public class SelectCompAnnFrame  extends AnchorPane implements Initializable, Wi
 		setSelectRadio.setUserData(RadioOptions.load);
 		dontLoadRadio.setUserData(RadioOptions.dontLoad);
 
+                autoReviseCheck.setSelected(false);
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
 		    public void changed(ObservableValue<? extends Toggle> ov,
 		        Toggle old_toggle, Toggle new_toggle) {

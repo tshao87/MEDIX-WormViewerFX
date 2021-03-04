@@ -95,6 +95,21 @@ public class FrameAnnotationManager implements Iterable<FrameAnnotationInfo> {
         return fai;
     }
 
+    public int findNeedsReview(int currentIndex)
+    {
+        int j = currentIndex + 1;
+        try
+        {
+        while (j >= 0 && j < frameByNo.size() && j >= 0 && frameByNo.containsKey(j) && !frameByNo.get(j).IsNeedsReview())
+            j += 1;
+        }
+        catch(Exception e)
+        {
+            boolean b = frameByNo.get(j).IsNeedsReview();
+        }
+        return j;
+    }
+    
     public int findNonMatchAfter(int currentIndex)
     {
         return findNonMatch(currentIndex, 1);

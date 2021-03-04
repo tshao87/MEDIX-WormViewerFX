@@ -4,7 +4,8 @@ public enum AnnotationShortValue {
     Forward,
     Backward,
     Stop,
-    Unknown
-
+    Turn,
+    Unknown,
+    NeedsReview
 }
 

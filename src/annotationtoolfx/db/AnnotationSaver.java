@@ -42,15 +42,16 @@ public class AnnotationSaver {
 		rs.close();
 		stmt.close();
 		//Do updates
-	    String SQL = "UPDATE annotations SET annotation = ? WHERE setid = ? AND frameid = ?";
+	    String SQL = "UPDATE annotations SET annotation = ?, reviewed = ? WHERE setid = ? AND frameid = ?";
 	    try {
 	        stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(SQL);
 	        ConnectionSingleton.getConnectionInstance().getConnection().setAutoCommit(false);
-	        stmt.setString(2,  set.getSetId());
+	        stmt.setString(3,  set.getSetId());
 	        
 	        for(FrameAnnotationInfo fai : updateFrames) {
 		        stmt.setString(1,  fai.getUpdatedAnnotation());
-		        stmt.setString(3,  fai.getdbFrameId());
+		        stmt.setBoolean(2,  fai.getReviewed());
+		        stmt.setString(4,  fai.getdbFrameId());
 		        stmt.addBatch(); // Add to Batch
 	        }
 
@@ -104,7 +105,7 @@ public class AnnotationSaver {
 
 	private void doSaveAnnotations(ArrayList<FrameAnnotationInfo> unhandledFrames, String setId) throws SQLException{
 		PreparedStatement stmt;
-		ArrayList<FrameAnnotationInfo> insertFrames = new ArrayList<FrameAnnotationInfo>();
+		/*ArrayList<FrameAnnotationInfo> insertFrames = new ArrayList<FrameAnnotationInfo>();
 
 			
 		for(FrameAnnotationInfo fai : unhandledFrames) {
@@ -116,16 +117,25 @@ public class AnnotationSaver {
 		for(FrameAnnotationInfo fai : insertFrames) {
 			unhandledFrames.remove(fai);
 		}
-		
+		*/
 		//Do inserts
-	    String SQL = "INSERT INTO annotations(frameid, setid, annotation) VALUES(?, ?, ?);";
+	    String SQL = "INSERT INTO annotations(frameid, setid, annotation, reviewed) VALUES(?, ?, ?, ?);";
 	    try {
 	        stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(SQL);
 	        ConnectionSingleton.getConnectionInstance().getConnection().setAutoCommit(false);
 	        stmt.setString(2,  setId);
 	        
-	        for(FrameAnnotationInfo fai : insertFrames) {
-		        stmt.setString(3,  fai.getUpdatedAnnotation());
+	        for(FrameAnnotationInfo fai : unhandledFrames) {
+                    stmt.setBoolean(4, fai.getReviewed());
+		      if(!(fai.getUpdatedAnnotation() == null || fai.getUpdatedAnnotation().trim().length() == 0))
+                              stmt.setString(3,  fai.getUpdatedAnnotation());
+                      else if((!(fai.getPredictedAnnotation()== null || fai.getPredictedAnnotation().trim().length() == 0)) &&
+                              (!fai.getPredictedAnnotation().contains("NeedsReview")))
+                              stmt.setString(3,  fai.getPredictedAnnotation());
+                      else if(!(fai.getHumanAnnotation()== null || fai.getHumanAnnotation().trim().length() == 0))
+                              stmt.setString(3,  fai.getHumanAnnotation());
+                      else
+                          continue;
 		        stmt.setString(1,  fai.getdbFrameId());
 		        stmt.addBatch(); // Add to Batch
 	        }
@@ -140,7 +150,7 @@ public class AnnotationSaver {
 	}
 
 	private String getNextSetId(String strainTypeId) throws SQLException {
-	    String sql = "SELECT setid FROM annotationset WHERE straintypeid = ? ORDER BY setid DESC;";
+	    String sql = "SELECT setid FROM annotationset WHERE straintypeid = ? ORDER BY datetimeannotation DESC;";
 		PreparedStatement stmt = ConnectionSingleton.getConnectionInstance().getConnection().prepareStatement(sql); 
 		stmt.setString(1, strainTypeId);
 		ResultSet rs = stmt.executeQuery();

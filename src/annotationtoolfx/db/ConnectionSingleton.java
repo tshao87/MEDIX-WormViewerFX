@@ -9,7 +9,7 @@ import java.sql.Connection;
 public class ConnectionSingleton {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:postgresql://140.192.247.115:5432/c_elegans_v6";
+    static final String DB_URL = "jdbc:postgresql://140.192.247.25:5432/c_elegans_v6";
 
     //  Database credentials
 //    static final String USER = "postgres";
@@ -21,6 +21,7 @@ public class ConnectionSingleton {
     
     private Connection conn = null;    
     private String lastLoginId = "";
+    private boolean skipAll = false;
     
     public boolean Login(String email, String password) {
 		try {
@@ -38,6 +39,16 @@ public class ConnectionSingleton {
     
     protected ConnectionSingleton(Connection c) {
     	conn = c;
+    }
+    
+    public boolean GetSkipAll()
+    {
+        return skipAll;
+    }
+    
+    public void SkipAll(boolean value)
+    {
+        skipAll = value;
     }
     
     public static ConnectionSingleton getConnectionInstance() {

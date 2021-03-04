@@ -4,12 +4,13 @@ import java.io.File;
 
 import annotationtoolfx.db.FrameManagerLoader;
 import annotationtoolfx.db.StrainTypeLoader;
+import annotationtoolfx.db.AutoRevise;
 import annotationtoolfx.object.FrameAnnotationManager;
 
 public class LoadingControlManager {
 
-	private FrameManagerLoader loader;
-	File wormImageDirectory = null;
+    private FrameManagerLoader loader;
+    File wormImageDirectory = null;
     File predictedAnnFile = null;
     File offlineAnnFile = null;
     private int selectedPredCol = -1;
@@ -17,7 +18,8 @@ public class LoadingControlManager {
     private String compareAnnSet;
     private String editAnnSet;
     private StrainTypeLoader strainLoader; 
-
+    private boolean revise = false;
+    
     public LoadingControlManager() {
     	strainLoader = new StrainTypeLoader();
     	loader = new FrameManagerLoader();
@@ -32,6 +34,9 @@ public class LoadingControlManager {
 		loader.setPredictionFile(predictedAnnFile);
 		loader.setPredictionColumn(selectedPredCol);
 		loader.LoadAnnFrameMgr();	
+                if(revise){
+                    new AutoRevise().Revise(loader.getFrameMgr().getFrameList());
+                }
 	}
 	
 	public FrameAnnotationManager getFrameMgr() {
@@ -93,5 +98,10 @@ public class LoadingControlManager {
 	public int getPredictionColumn() {
 		return selectedPredCol;
 	}
+        
+        public void setRevise(boolean val)
+        {
+            revise = val;
+        }
 	
 }

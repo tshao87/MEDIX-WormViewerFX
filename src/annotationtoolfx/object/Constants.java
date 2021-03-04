@@ -16,6 +16,6 @@ public class Constants {
     public static final String JPEG = ".JPEG";
     public static final String JPG = ".JPG";
     
-    public static final String WormUrl = "http://140.192.247.115:8585/images/";
+    public static final String WormUrl = "http://140.192.247.25:8585/images/";
     
 }

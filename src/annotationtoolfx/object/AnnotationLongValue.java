@@ -8,5 +8,6 @@ public enum AnnotationLongValue {
     ReverseLong,
     ReverseShort,
     Stop,
-    Unknown
+    Unknown,
+    NeedsReview
 }

@@ -1,5 +1,7 @@
 package annotationtoolfx.db;
 
+import annotationtoolfx.object.AnnotationLongValue;
+import annotationtoolfx.object.AnnotationShortValue;
 import annotationtoolfx.object.FileNameInfo;
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,6 +23,7 @@ public class FrameManagerLoader {
 	private File predictedAnnFile;
 	private int predColIndex;
 	private File offlineAnnFile;
+        
 	
 	private FrameAnnotationManager frameMgr;
 
@@ -83,7 +86,7 @@ public class FrameManagerLoader {
 	}
 
         public boolean AddAnnotations(boolean compare, HashMap<String, FrameAnnotationInfo> map){
-            String queryAnn = "SELECT frameid, annotation FROM annotations WHERE annotations.setid = ?"; 
+            String queryAnn = "SELECT frameid, annotation, reviewed FROM annotations WHERE annotations.setid = ?"; 
 
             ResultSet rs = null;
             PreparedStatement stmt = null;
@@ -103,12 +106,11 @@ public class FrameManagerLoader {
                     frameNoStr = rs.getString(1);
                     String[] list = frameNoStr.split("_");
                     frameNoStr = list[list.length-1];
-                    
                     if(map.containsKey(frameNoStr)){
                         if(compare)
-                            map.get(frameNoStr).setHumanAnnotation(rs.getString(2));
+                            map.get(frameNoStr).setHumanAnnotation(rs.getString(2), rs.getBoolean(3));
                         else
-                            map.get(frameNoStr).setUpdatedAnnotation(rs.getString(2));
+                            map.get(frameNoStr).setUpdatedAnnotation(rs.getString(2), rs.getBoolean(3));
                     }
                 }
             }
@@ -130,8 +132,8 @@ public class FrameManagerLoader {
         
 	public boolean LoadAnnFrameMgr() {
 
-		String queryNoAnn = "SELECT imageinfo.frameid, imagenumber, timeelapsed FROM imageinfo " + 
-				"WHERE imageinfo.straintypeid = ? ORDER BY imageinfo.imagenumber;";
+		String queryNoAnn = "SELECT imageinfo.frameid, imageinfo.imagenumber, imageinfo.timeelapsed, rawmovementfeatures.speed FROM imageinfo " + 
+				"JOIN rawmovementfeatures ON imageInfo.frameid = rawmovementfeatures.frameid WHERE imageinfo.straintypeid = ? ORDER BY imageinfo.imagenumber;";
 		PreparedStatement stmt = null;
 		ArrayList<FrameAnnotationInfo> list = new ArrayList<FrameAnnotationInfo>();
 		HashMap<String, FrameAnnotationInfo> map = new HashMap<String, FrameAnnotationInfo>();
@@ -165,6 +167,7 @@ public class FrameManagerLoader {
 		            fai.setElapsedTime(String.format("%f", rs.getDouble(3)));
 		            fai.setFrameNo(rs.getInt(2));
 		            fai.setdbFrameId(rs.getString(1));
+		            fai.setSpeed(rs.getDouble(4));
                             list.add(fai);			    	
                             map.put(frameNoStr, fai);
                         }

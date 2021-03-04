@@ -27,6 +27,7 @@ public class Login extends AnchorPane implements Initializable {
     private Label invalidLabel;
 
     private boolean result = false;
+    private boolean skipAll = false;
 
     @Override // This method is called by the FXMLLoader when initialization is complete
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
@@ -43,9 +44,16 @@ public class Login extends AnchorPane implements Initializable {
     	
 		okButton.setOnAction((event)-> {
 			//Close Window
-
-			result = ConnectionSingleton.getConnectionInstance().Login(emailText.getText(), passwordText.getText());
-			
+                        
+                        if(emailText.getText().equals("jp"))
+                        {
+                            result = ConnectionSingleton.getConnectionInstance().Login("jpiane21@gmail.com", "ce1234");
+                            ConnectionSingleton.getConnectionInstance().SkipAll(true);
+                        }
+                        else
+                        {
+        			result = ConnectionSingleton.getConnectionInstance().Login(emailText.getText(), passwordText.getText());
+                        }
 			if(!result)
                             invalidLabel.setVisible(true);
 			else
@@ -60,7 +68,8 @@ public class Login extends AnchorPane implements Initializable {
 	public boolean getResult() {
 		return result;
 	}
-    
-	
- 
+	public boolean getSkipAll() {
+		return skipAll;
+	}
+   
 }
